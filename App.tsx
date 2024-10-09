@@ -1,6 +1,7 @@
 import React from 'react';
 import HomeScreen from "./screens/HomeScreen";
 import ConnectionScreen from "./screens/ConnectionScreen";
+import RegistrationScreen from "./screens/RegistrationScreen";
 import {
   StyleSheet,
   Button,
@@ -30,8 +31,12 @@ const App = () => (
       options={{headerShown: false}}
     />
     <Stack.Screen
-      name="Connection"
+      name="Connexion"
       component={ConnectionScreen}
+    />
+    <Stack.Screen
+      name="Inscription"
+      component={RegistrationScreen}
     />
   </Stack.Navigator>
 </NavigationContainer>

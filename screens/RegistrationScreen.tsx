@@ -21,19 +21,36 @@ const backImage = require('./assets/backgroundConnexion.png');
 
 const { width } = Dimensions.get('window');
 
-const ConnectionScreen = ({ navigation }) => {
+const RegistrationScreen = ({ navigation }) => {
+    const [firstName, onChangeFirstName] = React.useState('');
+    const [lastName, onChangeLastName] = React.useState('');
     const [email, onChangeEmail] = React.useState('');
     const [password, onChangePassword] = React.useState('');
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            behavior={Platform.OS === 'android' ? 'padding' : 'height'}
             style={{ flex: 1 }}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 75}
+            keyboardVerticalOffset={Platform.OS === 'android' ? 40 : 75} 
         >
             <ImageBackground source={backImage} resizeMode="cover" style={styles.image}>
                 <SafeAreaView style={styles.safeArea}>
+                    {/* Основной контент */}
                     <View style={styles.contentContainer}>
+                    <TextInput
+                            label="Prénom"
+                            value={firstName}
+                            onChangeText={onChangeFirstName}
+                            style={styles.input}
+                            activeUnderlineColor="#FF3399"
+                        />
+                        <TextInput
+                            label="Nom"
+                            value={lastName}
+                            onChangeText={onChangeLastName}
+                            style={styles.input}
+                            activeUnderlineColor="#FF3399"
+                        />
                         <TextInput
                             label="Email"
                             value={email}
@@ -49,8 +66,8 @@ const ConnectionScreen = ({ navigation }) => {
                             activeUnderlineColor="#FF3399"
                             secureTextEntry={true} // скрытие пароля
                         />
-                        <Link to={{ screen: '' }} style={styles.link}>Mot de passe oublié ?</Link>
                     </View>
+
                     <View style={styles.bottomContainer}>
                         <Text style={styles.agreement}>
                             By continuing, you agree to our
@@ -58,8 +75,8 @@ const ConnectionScreen = ({ navigation }) => {
                             <Link to={{ screen: '' }} style={styles.link}> Privacy Policy</Link>.
                         </Text>
                         <AppButton
-                            onPress={() => navigation.navigate("Connection")}
-                            title="Connexion"
+                            onPress={() => navigation.navigate("")}
+                            title="Inscription"
                         />
                     </View>
                 </SafeAreaView>
@@ -84,7 +101,7 @@ const styles = StyleSheet.create({
     },
     bottomContainer: {
         alignItems: 'center',
-        marginBottom: 40,
+        marginBottom: 20, 
     },
     appButtonContainer: {
         backgroundColor: "#FF3399",
@@ -117,8 +134,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 16,
         lineHeight: 24,
-        backgroundColor: "#FFFFFF",
-        borderRadius: 8
+        backgroundColor: "#FFFFFF"
     },
     agreement: {
         width: width - 47,
@@ -132,4 +148,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ConnectionScreen;
+export default RegistrationScreen;
