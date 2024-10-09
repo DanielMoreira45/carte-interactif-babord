@@ -75,8 +75,8 @@ const RegistrationScreen = ({ navigation }) => {
                             <Link to={{ screen: '' }} style={styles.link}> Privacy Policy</Link>.
                         </Text>
                         <AppButton
-                            onPress={() => navigation.navigate("Connection")}
-                            title="Connexion"
+                            onPress={() => navigation.navigate("")}
+                            title="Inscription"
                         />
                     </View>
                 </SafeAreaView>
