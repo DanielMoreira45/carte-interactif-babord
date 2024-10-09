@@ -33,10 +33,10 @@ const HomeScreen = ({navigation}) => (
           Ou un café équitable ?
         </Text>
         <AppButton
-          onPress={() => navigation.navigate("")}
+          onPress={() => navigation.navigate("Inscription")}
           title="Creer un compte"
         />
-        <Text style={styles.text}>Déjà chez nous ? <Link to={{ screen: 'Connection'}} style={styles.link}>
+        <Text style={styles.text}>Déjà chez nous ? <Link to={{ screen: 'Connexion'}} style={styles.link}>
         Connectez-vous
     </Link></Text>
       </View>

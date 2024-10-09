@@ -27,13 +27,12 @@ const ConnectionScreen = ({ navigation }) => {
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === 'android' ? 'padding' : 'height'}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flex: 1 }}
-            keyboardVerticalOffset={Platform.OS === 'android' ? 40 : 75} 
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 75}
         >
             <ImageBackground source={backImage} resizeMode="cover" style={styles.image}>
                 <SafeAreaView style={styles.safeArea}>
-                    {/* Основной контент */}
                     <View style={styles.contentContainer}>
                         <TextInput
                             label="Email"
@@ -52,8 +51,6 @@ const ConnectionScreen = ({ navigation }) => {
                         />
                         <Link to={{ screen: '' }} style={styles.link}>Mot de passe oublié ?</Link>
                     </View>
-
-                    {/* Контейнер внизу с кнопкой и соглашением */}
                     <View style={styles.bottomContainer}>
                         <Text style={styles.agreement}>
                             By continuing, you agree to our
@@ -87,7 +84,7 @@ const styles = StyleSheet.create({
     },
     bottomContainer: {
         alignItems: 'center',
-        marginBottom: 20, 
+        marginBottom: 40,
     },
     appButtonContainer: {
         backgroundColor: "#FF3399",
@@ -120,7 +117,8 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 16,
         lineHeight: 24,
-        backgroundColor: "#FFFFFF"
+        backgroundColor: "#FFFFFF",
+        borderRadius: 8
     },
     agreement: {
         width: width - 47,
