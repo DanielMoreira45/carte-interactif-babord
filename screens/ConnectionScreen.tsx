@@ -78,14 +78,12 @@ const AppButton = ({ onPress, title }) => (
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        justifyContent: 'space-between', // распределение пространства между блоками
+        justifyContent: 'space-between',
     },
     contentContainer: {
-        // Блок с полями ввода
         alignItems: 'center',
     },
     bottomContainer: {
-        // Контейнер с кнопкой и текстом соглашения
         alignItems: 'center',
         marginBottom: 40,
         
@@ -121,7 +119,8 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 16,
         lineHeight: 24,
-        backgroundColor: "#FFFFFF"
+        backgroundColor: "#FFFFFF",
+        borderRadius: 8
     },
     agreement: {
         width: width - 47,
