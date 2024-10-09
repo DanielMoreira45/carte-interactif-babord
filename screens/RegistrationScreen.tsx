@@ -21,7 +21,9 @@ const backImage = require('./assets/backgroundConnexion.png');
 
 const { width } = Dimensions.get('window');
 
-const ConnectionScreen = ({ navigation }) => {
+const RegistrationScreen = ({ navigation }) => {
+    const [firstName, onChangeFirstName] = React.useState('');
+    const [lastName, onChangeLastName] = React.useState('');
     const [email, onChangeEmail] = React.useState('');
     const [password, onChangePassword] = React.useState('');
 
@@ -35,6 +37,20 @@ const ConnectionScreen = ({ navigation }) => {
                 <SafeAreaView style={styles.safeArea}>
                     {/* Основной контент */}
                     <View style={styles.contentContainer}>
+                    <TextInput
+                            label="Prénom"
+                            value={firstName}
+                            onChangeText={onChangeFirstName}
+                            style={styles.input}
+                            activeUnderlineColor="#FF3399"
+                        />
+                        <TextInput
+                            label="Nom"
+                            value={lastName}
+                            onChangeText={onChangeLastName}
+                            style={styles.input}
+                            activeUnderlineColor="#FF3399"
+                        />
                         <TextInput
                             label="Email"
                             value={email}
@@ -50,10 +66,8 @@ const ConnectionScreen = ({ navigation }) => {
                             activeUnderlineColor="#FF3399"
                             secureTextEntry={true} // скрытие пароля
                         />
-                        <Link to={{ screen: '' }} style={styles.link}>Mot de passe oublié ?</Link>
                     </View>
 
-                    {/* Контейнер внизу с кнопкой и соглашением */}
                     <View style={styles.bottomContainer}>
                         <Text style={styles.agreement}>
                             By continuing, you agree to our
@@ -134,4 +148,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ConnectionScreen;
+export default RegistrationScreen;
