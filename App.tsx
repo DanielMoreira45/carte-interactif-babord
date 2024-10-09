@@ -1,5 +1,6 @@
 import React from 'react';
 import HomeScreen from "./screens/HomeScreen";
+import ConnectionScreen from "./screens/ConnectionScreen";
 import {
   StyleSheet,
   Button,
@@ -26,6 +27,11 @@ const App = () => (
     <Stack.Screen
       name="Home"
       component={HomeScreen}
+      options={{headerShown: false}}
+    />
+    <Stack.Screen
+      name="Connection"
+      component={ConnectionScreen}
     />
   </Stack.Navigator>
 </NavigationContainer>

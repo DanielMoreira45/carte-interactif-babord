@@ -10,21 +10,19 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
-  Linking,
 } from 'react-native';
 
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, Link} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 const Stack = createNativeStackNavigator();
 
-const backImage = require('./assets/background.png');
+const backImage = require('./assets/backgroundHome.png');
 const logo = require('./assets/logo_babord.png');
 
-const { height } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 
-const HomeScreen = () => (
+const HomeScreen = ({navigation}) => (
   <ImageBackground source={backImage} resizeMode="cover" style={styles.image}>
-    <View>
     <SafeAreaView>
     <Image source={logo} style={styles.logo}></Image>
       <View style={styles.container}>
@@ -35,13 +33,14 @@ const HomeScreen = () => (
           Ou un café équitable ?
         </Text>
         <AppButton
-          onPress={() => Alert.alert('Simple Button pressed')}
+          onPress={() => navigation.navigate("")}
           title="Creer un compte"
         />
-        <Text style={styles.text}>Déjà chez nous ? <Text style={styles.link}>Connectez-vous</Text></Text>
+        <Text style={styles.text}>Déjà chez nous ? <Link to={{ screen: 'Connection'}} style={styles.link}>
+        Connectez-vous
+    </Link></Text>
       </View>
     </SafeAreaView>
-    </View>
   </ImageBackground>
 );
 
@@ -58,7 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: 48,
     paddingVertical: 16,
     paddingHorizontal: 32,
-    width: 193,
+    width: 182,
     height: 48,
     alignSelf: "center",
     gap: 10,
@@ -112,7 +111,9 @@ const styles = StyleSheet.create({
     color: '#000000'
   },
   link: {
-    color: '#FF3399'
+    color: '#FF3399',
+    fontSize: 16,
+    lineHeight: 24,
   }
 });
 
