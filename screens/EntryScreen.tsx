@@ -16,12 +16,12 @@ import {NavigationContainer, Link} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 const Stack = createNativeStackNavigator();
 
-const backImage = require('./assets/backgroundHome.png');
+const backImage = require('./assets/backgroundEntry.png');
 const logo = require('./assets/logo_babord.png');
 
 const {height, width} = Dimensions.get('window');
 
-const HomeScreen = ({navigation}) => (
+const EntryScreen = ({navigation}) => (
   <ImageBackground source={backImage} resizeMode="cover" style={styles.image}>
     <SafeAreaView>
     <Image source={logo} style={styles.logo}></Image>
@@ -117,4 +117,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HomeScreen;
+export default EntryScreen;

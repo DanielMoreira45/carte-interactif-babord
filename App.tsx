@@ -1,5 +1,5 @@
 import React from 'react';
-import HomeScreen from "./screens/HomeScreen";
+import EntryScreen from "./screens/EntryScreen";
 import ConnectionScreen from "./screens/ConnectionScreen";
 import RegistrationScreen from "./screens/RegistrationScreen";
 import {
@@ -24,10 +24,10 @@ const { height } = Dimensions.get('window');
 
 const App = () => (
   <NavigationContainer>
-  <Stack.Navigator initialRouteName='HomeScreen'>
+  <Stack.Navigator initialRouteName='EntryScreen'>
     <Stack.Screen
-      name="Home"
-      component={HomeScreen}
+      name="Entry"
+      component={EntryScreen}
       options={{headerShown: false}}
     />
     <Stack.Screen
