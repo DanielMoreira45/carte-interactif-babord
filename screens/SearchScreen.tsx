@@ -1,9 +1,11 @@
 import React from 'react';
 import {
   StyleSheet,
+  Button,
   View,
   SafeAreaView,
   Text,
+  Alert,
   ImageBackground,
   TouchableOpacity,
   Dimensions,
@@ -21,14 +23,14 @@ const Tab = createBottomTabNavigator();
 const logo = require('./assets/logo_babord.png');
 
 
-const HomeScreen = ({navigation}) => (
+const SearchScreen = ({navigation}) => (
   <LinearGradient
     colors={['#000000', '#FF3399']}
     style={styles.linearGradient}
   >
     <Image source={logo} style={styles.logo}></Image>
     <Text style={styles.title}>
-      Salut l’oreille
+      Search screen
     </Text>
     </LinearGradient>
 );
@@ -58,4 +60,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HomeScreen;
+export default SearchScreen;

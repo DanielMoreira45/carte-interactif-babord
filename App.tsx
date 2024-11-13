@@ -1,20 +1,35 @@
 import React from 'react';
+import EntryScreen from "./screens/EntryScreen";
+import HomeScreen from "./screens/HomeScreen";
+import ConnectionScreen from "./screens/ConnectionScreen";
+import RegistrationScreen from "./screens/RegistrationScreen";
+import MainScreen from "./screens/MainScreen";
+import CarteScreen from './screens/CarteScreen';
+import {
+  StyleSheet,
+  Button,
+  View,
+  SafeAreaView,
+  Text,
+  Alert,
+  ImageBackground,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+  Linking,
+} from 'react-native';
+
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
-import HomeScreen from './screens/HomeScreen';
-import ConnectionScreen from './screens/ConnectionScreen';
-import RegistrationScreen from './screens/RegistrationScreen';
-import CarteScreen from './screens/CarteScreen';
-
 const Stack = createNativeStackNavigator();
+const { height } = Dimensions.get('window');
 
 const App = () => (
   <NavigationContainer>
-  <Stack.Navigator initialRouteName="HomeScreen">
+  <Stack.Navigator initialRouteName='EntryScreen'>
     <Stack.Screen
-      name="Home"
-      component={HomeScreen}
+      name="Entry"
+      component={EntryScreen}
       options={{headerShown: false}}
     />
     <Stack.Screen
@@ -26,8 +41,14 @@ const App = () => (
       component={RegistrationScreen}
     />
     <Stack.Screen
+      name="Main"
+      component={MainScreen}
+      options={{headerShown: false}}
+      />
+    <Stack.Screen
       name="Carte"
       component={CarteScreen}
+      />
     />
   </Stack.Navigator>
 </NavigationContainer>
