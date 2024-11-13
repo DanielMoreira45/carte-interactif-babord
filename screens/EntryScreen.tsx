@@ -14,11 +14,10 @@ import {
 
 import {NavigationContainer, Link} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-const Stack = createNativeStackNavigator();
-
 const backImage = require('./assets/backgroundEntry.png');
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const logo = require('./assets/logo_babord.png');
-
+const Tab = createBottomTabNavigator();
 const {height, width} = Dimensions.get('window');
 
 const EntryScreen = ({navigation}) => (
@@ -42,6 +41,7 @@ const EntryScreen = ({navigation}) => (
       </View>
     </SafeAreaView>
   </ImageBackground>
+    
 );
 
 const AppButton = ({ onPress, title }) => (

@@ -58,7 +58,7 @@ const ConnectionScreen = ({ navigation }) => {
                             <Link to={{ screen: '' }} style={styles.link}> Privacy Policy</Link>.
                         </Text>
                         <AppButton
-                            onPress={() => navigation.navigate("Connection")}
+                            onPress={() => navigation.navigate("Main")}
                             title="Connexion"
                         />
                     </View>
