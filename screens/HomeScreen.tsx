@@ -1,30 +1,26 @@
 import React from 'react';
 import {
   StyleSheet,
-  Button,
   View,
   SafeAreaView,
   Text,
-  Alert,
   ImageBackground,
   TouchableOpacity,
   Dimensions,
   Image,
 } from 'react-native';
 
-import {NavigationContainer, Link} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-const Stack = createNativeStackNavigator();
+import {Link} from '@react-navigation/native';
 
 const backImage = require('./assets/backgroundHome.png');
 const logo = require('./assets/logo_babord.png');
 
-const {height, width} = Dimensions.get('window');
+const {height} = Dimensions.get('window');
 
 const HomeScreen = ({navigation}) => (
   <ImageBackground source={backImage} resizeMode="cover" style={styles.image}>
     <SafeAreaView>
-    <Image source={logo} style={styles.logo}></Image>
+    <Image source={logo} style={styles.logo} />
       <View style={styles.container}>
         <Text style={styles.title}>
           Un miel bio ?
@@ -32,8 +28,9 @@ const HomeScreen = ({navigation}) => (
         <Text style={styles.title}>
           Ou un café équitable ?
         </Text>
+        <AppButton onPress={() => navigation.navigate('test')} title="Carte" />
         <AppButton
-          onPress={() => navigation.navigate("Inscription")}
+          onPress={() => navigation.navigate('Inscription')}
           title="Creer un compte"
         />
         <Text style={styles.text}>Déjà chez nous ? <Link to={{ screen: 'Connexion'}} style={styles.link}>
@@ -48,26 +45,26 @@ const AppButton = ({ onPress, title }) => (
   <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
   <Text style={styles.appButtonText}>{title}</Text>
 </TouchableOpacity>
-)
+);
 
 const styles = StyleSheet.create({
   appButtonContainer: {
     elevation: 1,
-    backgroundColor: "#FF3399",
+    backgroundColor: '#FF3399',
     borderRadius: 48,
     paddingVertical: 16,
     paddingHorizontal: 32,
     width: 182,
     height: 48,
-    alignSelf: "center",
+    alignSelf: 'center',
     gap: 10,
     marginTop: 65,
     marginBottom: 25,
   },
   appButtonText: {
     fontSize: 16,
-    color: "#fff",
-    alignSelf: "center",
+    color: '#fff',
+    alignSelf: 'center',
     fontFamily: 'Chivo',
     lineHeight: 16,
   },
@@ -81,7 +78,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: height * 0.62,
     marginHorizontal: 16,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   view: {
     //flex: 1,
@@ -94,13 +91,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     fontSize: 25,
-    fontFamily: 'Chivo',   
+    fontFamily: 'Chivo',
   },
   logo: {
     width: 94,
     height: 93,
     top: 15,
-    alignSelf: "center",
+    alignSelf: 'center',
 
   },
   text: {
@@ -108,13 +105,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontFamily: 'Chivo',
-    color: '#000000'
+    color: '#000000',
   },
   link: {
     color: '#FF3399',
     fontSize: 16,
     lineHeight: 24,
-  }
+  },
 });
 
 export default HomeScreen;
