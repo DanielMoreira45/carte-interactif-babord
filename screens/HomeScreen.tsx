@@ -1,11 +1,9 @@
 import React from 'react';
 import {
   StyleSheet,
-  Button,
   View,
   SafeAreaView,
   Text,
-  Alert,
   ImageBackground,
   TouchableOpacity,
   Dimensions,

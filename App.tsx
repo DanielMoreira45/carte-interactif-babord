@@ -4,6 +4,7 @@ import HomeScreen from "./screens/HomeScreen";
 import ConnectionScreen from "./screens/ConnectionScreen";
 import RegistrationScreen from "./screens/RegistrationScreen";
 import MainScreen from "./screens/MainScreen";
+import CarteScreen from './screens/CarteScreen';
 import {
   StyleSheet,
   Button,
@@ -43,6 +44,11 @@ const App = () => (
       name="Main"
       component={MainScreen}
       options={{headerShown: false}}
+      />
+    <Stack.Screen
+      name="Carte"
+      component={CarteScreen}
+      />
     />
   </Stack.Navigator>
 </NavigationContainer>
