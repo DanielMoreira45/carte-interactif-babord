@@ -13,9 +13,7 @@ import {
 
 import { TextInput } from 'react-native-paper';
 import { Link } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const Stack = createNativeStackNavigator();
 
 const backImage = require('./assets/backgroundConnexion.png');
 
@@ -58,21 +56,21 @@ const ConnectionScreen = ({ navigation }) => {
                             <Link to={{ screen: '' }} style={styles.link}> Privacy Policy</Link>.
                         </Text>
                         <AppButton
-                            onPress={() => navigation.navigate("Connection")}
+                            onPress={() => navigation.navigate('Connection')}
                             title="Connexion"
                         />
                     </View>
                 </SafeAreaView>
             </ImageBackground>
         </KeyboardAvoidingView>
-    )
+    );
 };
 
 const AppButton = ({ onPress, title }) => (
     <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
         <Text style={styles.appButtonText}>{title}</Text>
     </TouchableOpacity>
-)
+);
 
 const styles = StyleSheet.create({
     safeArea: {
@@ -87,18 +85,18 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     appButtonContainer: {
-        backgroundColor: "#FF3399",
+        backgroundColor: '#FF3399',
         borderRadius: 48,
         paddingVertical: 16,
         paddingHorizontal: 32,
         width: width - 47,
         height: 48,
-        alignSelf: "center",
+        alignSelf: 'center',
     },
     appButtonText: {
         fontSize: 16,
-        color: "#fff",
-        alignSelf: "center",
+        color: '#fff',
+        alignSelf: 'center',
         fontFamily: 'Chivo',
         lineHeight: 16,
     },
@@ -107,18 +105,18 @@ const styles = StyleSheet.create({
     },
     link: {
         color: '#FF3399',
-        alignSelf: "center",
+        alignSelf: 'center',
         marginTop: 20,
     },
     input: {
         width: width - 47,
         height: 48,
-        alignSelf: "center",
+        alignSelf: 'center',
         marginTop: 20,
         fontSize: 16,
         lineHeight: 24,
-        backgroundColor: "#FFFFFF",
-        borderRadius: 8
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
     },
     agreement: {
         width: width - 47,
@@ -127,9 +125,9 @@ const styles = StyleSheet.create({
         fontFamily: 'Chivo',
         color: '#000000',
         marginBottom: 20,
-        alignSelf: "center",
-        textAlign: 'center'
-    }
+        alignSelf: 'center',
+        textAlign: 'center',
+    },
 });
 
 export default ConnectionScreen;
