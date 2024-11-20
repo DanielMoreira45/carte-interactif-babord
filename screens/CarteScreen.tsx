@@ -3,6 +3,15 @@ import { StyleSheet, View, PermissionsAndroid, Platform, Text, FlatList, Touchab
 import MapView, { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 
+type MarkerType = {
+  id: number;
+  coordinate: { latitude: number; longitude: number };
+  title: string;
+  description: string;
+  details: string;
+  image: string;
+};
+
 const MapComposant = () => {
   const [initialRegion, setInitialRegion] = useState({
     latitude: 46.603354,
@@ -12,64 +21,30 @@ const MapComposant = () => {
   });
 
   const PinImage = require('./assets/pinBabord.png');
-
   const [selectedMarkerId, setSelectedMarkerId] = useState<number | null>(null);
   const mapRef = useRef<MapView>(null);
   const flatListRef = useRef<FlatList>(null);
+  const [markers, setMarkers] = useState<MarkerType[]>([]);
 
-  const markers = [
-    {
-      id: 1,
-      coordinate: { latitude: 47.916672, longitude: 1.9 },
-      title: 'Orleans',
-      description: 'Linked to the Orleans cathedral',
-      details: 'Orleans is famous for its cathedral and its history with Joan of Arc.',
-      style: 'rock',
-      date: '2025-02-24',
-      image: 'https://picsum.photos/200',
-    },
-    {
-      id: 2,
-      coordinate: { latitude: 48.8566, longitude: 2.3522 },
-      title: 'Paris',
-      description: 'Eiffel Tower',
-      details: 'Paris is known for the Eiffel Tower, Louvre Museum, and its rich culture.',
-      style: 'jazz',
-      date: '2025-03-15',
-      image: 'https://picsum.photos/200',
-    },
-    {
-      id: 3,
-      coordinate: { latitude: 43.296482, longitude: 5.36978 },
-      title: 'Marseille',
-      description: 'Notre-Dame de la Garde',
-      details: 'Marseille is known for its port and Notre-Dame de la Garde.',
-      style: 'classical',
-      date: '2025-04-10',
-      image: 'https://picsum.photos/200',
-    },
-    {
-      id: 4,
-      coordinate: { latitude: 48.443854, longitude: 1.489012 },
-      title: 'Chartres',
-      description: 'Chartres Cathedral',
-      details: 'Chartres is known for its cathedral and its history.',
-      style: 'baroque',
-      date: '2025-05-20',
-      image: 'https://picsum.photos/200',
-    },
-    {
-      id: 5,
-      coordinate: { latitude: 47.322047, longitude: 5.04148 },
-      title: 'Dijon',
-      description: 'Palace of the Dukes of Burgundy',
-      details: 'Dijon is known for its mustard and the Palace of the Dukes of Burgundy.',
-      style: 'renaissance',
-      date: '2025-06-30',
-      image: 'https://picsum.photos/200',
-    },
-];
 
+  useEffect(() => {
+    const loadMarkers = async () => {
+      try {
+        const response = await fetch('https://api.jsonbin.io/v3/b/673df339e41b4d34e4577d85', {
+          method: 'GET',
+          headers: {
+            'X-Master-key': '$2a$10$1ga991U9L9JBX12QCZUP7eoSIDcCcG9lq9Aa93L6w5efPrzeyNRZy',
+          },
+        });
+        const data = await response.json().then((json) => json.record);
+        // console.log('Données des marqueurs :', data);
+        setMarkers(data);
+      } catch (error) {
+        console.error('Erreur lors du chargement des marqueurs :', error);
+      }
+    };
+    loadMarkers();
+  }, []);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -144,7 +119,7 @@ const MapComposant = () => {
       <TouchableOpacity onPress={() => onCardPress(item, index)}>
         <View style={[styles.card, item.id === selectedMarkerId && styles.selectedCard]}>
           <View>
-            <Image source={{ uri: item.image }} style={styles.cardimages}/>
+            <Image source={{ uri: item.image }} style={styles.cardimages} />
           </View>
           <View>
             <Text style={styles.cardTitle}>{item.title}</Text>
@@ -162,27 +137,30 @@ const MapComposant = () => {
         style={styles.map}
         region={initialRegion}
         showsUserLocation={true}
+        showsCompass={false}
       >
-        {markers.map((marker, index) => (
-          <Marker
-            key={marker.id}
-            coordinate={marker.coordinate}
-            title={marker.title}
-            description={marker.description}
-            onPress={() => onMarkerPress(marker.id, index, marker.coordinate)}
-          >
-            <Image
-              source={PinImage}
-              style={{ width: 50, height: 50 }} // Ajustez la taille selon vos besoins
-              resizeMode="contain" // Pour garder les proportions de l'image
-            />
-          </Marker>
-        ))}
-
+        {markers.length > 0 &&
+          markers.map((marker, index) => (
+            <Marker
+              key={marker.id}
+              coordinate={marker.coordinate}
+              title={marker.title}
+              description={marker.description}
+              style={selectedMarkerId === marker.id ? styles.selectedmarker : null}
+              onPress={() => {
+                onMarkerPress(marker.id, index, marker.coordinate);
+              }}
+            >
+              <Image
+                source={PinImage}
+                style={styles.markerimage} // Ajustez la taille selon vos besoins
+                resizeMode="contain" // Pour garder les proportions de l'image
+              />
+            </Marker>
+          ))}
       </MapView>
-
       <FlatList
-        ref={flatListRef} // Associer la référence à FlatList
+        ref={flatListRef}
         data={markers}
         horizontal
         keyExtractor={item => item.id.toString()}
@@ -204,8 +182,7 @@ const styles = StyleSheet.create({
   },
   cardList: {
     position: 'absolute',
-    bottom: 20,
-    // height: '20%',
+    bottom: 70,
     paddingHorizontal: 10,
   },
   card: {
@@ -237,11 +214,18 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
     maxWidth: 210,
   },
-  cardimages:{
+  cardimages: {
     width: 100,
     height: 100,
     marginRight: 10,
     borderRadius: 10,
+  },
+  markerimage: {
+    width: 50,
+    height: 50,
+  },
+  selectedmarker: {
+    
   },
 });
 

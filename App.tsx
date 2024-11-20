@@ -49,7 +49,6 @@ const App = () => (
       name="Carte"
       component={CarteScreen}
       />
-    />
   </Stack.Navigator>
 </NavigationContainer>
 );
