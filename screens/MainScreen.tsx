@@ -67,11 +67,11 @@ const MainScreen = ({navigation}) => (
                 
             })}>
     <Tab.Screen name="Home" component={HomeScreen}/>
-    <Tab.Screen name="Maps" component={CarteScreen}/>
+    {/* <Tab.Screen name="Maps" component={CarteScreen}/> */}
     
-    {/* <Tab.Screen name="Maps" component={HomeScreen} options={{tabBarButton: (props) => (
+    <Tab.Screen name="Maps" component={CarteScreen} options={{tabBarButton: (props) => (
                     <CustomTabBarButton {...props} />
-                )}}/> */}
+                )}}/>
     <Tab.Screen name="Search" component={SearchScreen}/>
 </Tab.Navigator>
 );
