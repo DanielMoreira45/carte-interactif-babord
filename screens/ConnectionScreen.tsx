@@ -45,7 +45,7 @@ const ConnectionScreen = ({ navigation }) => {
                             onChangeText={onChangePassword}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
-                            secureTextEntry={true} // скрытие пароля
+                            secureTextEntry={true}
                         />
                         <Link to={{ screen: '' }} style={styles.link}>Mot de passe oublié ?</Link>
                     </View>

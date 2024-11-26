@@ -1,8 +1,8 @@
 import React from 'react';
 import {
     StyleSheet,
-    View,
     TouchableOpacity,
+    View,
     Image
 } from 'react-native';
 
@@ -11,14 +11,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './HomeScreen';
 import SearchScreen from './SearchScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-const logo = require('./assets/logo_babord.png');
+const logo = require('./assets/logo_location.png');
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({children, onPress}) => (
     <TouchableOpacity style=  {{
         top: -30,
         justifyContent: 'center',
         alignItems: 'center',
-        ...styles.shadow
+        ...styles.shadow,
+        width:50,
+        height:65,
       } }
       onPress = {onPress}>
        {/* <View style = {{width: 70, height: 70, borderTopLeftRadius: 90, borderTopRightRadius: 100, borderBottomLeftRadius: 15, borderBottomRightRadius: 100,  backgroundColor: '#ff3399', transform: [{ rotate: '-45deg'} ]}}>{children}</View>  */}
@@ -44,33 +46,36 @@ const MainScreen = ({navigation}) => (
 
                     switch (route.name) {
                         case 'Home':
-                            iconName = 'home';
+                            iconName = 'home-outline';
                             break;
                         case 'Search':
                             iconName = 'search';
                             break;
                         case 'Maps':
-                            iconName = 'map';
+                            // iconName = 'map';
+                            return <Image source={logo} style={styles.logo}></Image>
                             break;
-                        // case 'Forum':
-                        //     iconName = 'activity';
-                        //     break;
-                        // case 'Profile':
-                        //     iconName = 'user';
-                        //     break;
+                        case 'Notifications':
+                            iconName = 'notifications-outline';
+                            break;
+                        case 'Profile':
+                            iconName = 'person-outline';
+                            break;
                         default:
                             break;
                     }
                     return <Ionicons name={iconName} size={24} color={'#C7C7C7'} />;
                 },
                 
-            })}>
+            })}
+>
     <Tab.Screen name="Home" component={HomeScreen}/>
-    
+    <Tab.Screen name="Search" component={SearchScreen}/>
     <Tab.Screen name="Maps" component={HomeScreen} options={{tabBarButton: (props) => (
                     <CustomTabBarButton {...props} />
                 )}}/>
-                <Tab.Screen name="Search" component={SearchScreen}/>
+    <Tab.Screen name="Notifications" component={HomeScreen}/>
+    <Tab.Screen name="Profile" component={HomeScreen}/>
 </Tab.Navigator>
 );
 
@@ -81,8 +86,8 @@ const styles = StyleSheet.create({
             width: 0,
             height: 10
         },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.5,
+        shadowOpacity: 0.50,
+        shadowRadius: 4,
         elevation: 5
     },
     container: {
