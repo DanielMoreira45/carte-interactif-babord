@@ -146,7 +146,6 @@ const MapComposant = () => {
               coordinate={marker.coordinate}
               title={marker.title}
               description={marker.description}
-              style={selectedMarkerId === marker.id ? styles.selectedmarker : null}
               onPress={() => {
                 onMarkerPress(marker.id, index, marker.coordinate);
               }}
@@ -223,9 +222,6 @@ const styles = StyleSheet.create({
   markerimage: {
     width: 50,
     height: 50,
-  },
-  selectedmarker: {
-    
   },
 });
 
