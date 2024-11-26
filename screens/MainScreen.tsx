@@ -11,6 +11,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './HomeScreen';
 import SearchScreen from './SearchScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CarteScreen from './CarteScreen';
 const logo = require('./assets/logo_babord.png');
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({children, onPress}) => (
@@ -66,11 +67,12 @@ const MainScreen = ({navigation}) => (
                 
             })}>
     <Tab.Screen name="Home" component={HomeScreen}/>
+    {/* <Tab.Screen name="Maps" component={CarteScreen}/> */}
     
-    <Tab.Screen name="Maps" component={HomeScreen} options={{tabBarButton: (props) => (
+    <Tab.Screen name="Maps" component={CarteScreen} options={{tabBarButton: (props) => (
                     <CustomTabBarButton {...props} />
                 )}}/>
-                <Tab.Screen name="Search" component={SearchScreen}/>
+    <Tab.Screen name="Search" component={SearchScreen}/>
 </Tab.Navigator>
 );
 
