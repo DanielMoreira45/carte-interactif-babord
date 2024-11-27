@@ -5,8 +5,6 @@ import {
   FlatList,
   Text,
   Image,
-  SafeAreaView,
-  StatusBar,
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
@@ -15,9 +13,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Link } from '@react-navigation/native';
-
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
 
 const logo = require('./assets/logo_babord.png');
 const im1 = require('./assets/backgroundConnexion.png');
@@ -105,7 +100,7 @@ const HomeScreen = ({ navigation }) => {
     >
       <Image source={logo} style={styles.logo}></Image>
       <Text style={styles.title}>
-        Salut l’oreille
+        Ohé explorateurice à grandes oreilles !
       </Text>
 
       <View style={styles.subtitleContainer}>
