@@ -10,8 +10,6 @@ import {
 } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Link } from '@react-navigation/native';
 
 const logo = require('./assets/logo_babord.png');
@@ -72,7 +70,7 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.content}>
               <Text style={styles.cardTitle}>{item.title}</Text>
               <Text style={styles.card1Details}>{item.details}</Text>
-              <Text style={styles.cardLink}>Voir plus</Text>
+              <Link to={{ screen: '' }} style={styles.cardLink}>Voir plus</Link>
             </View>
           </ImageBackground>
         </View>
@@ -149,12 +147,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   title: {
-    width: 175,
-    fontSize: 28,
+    fontSize: 20,
     lineHeight: 28,
     fontFamily: 'Chivo',
     color: '#FFFFFF',
     alignSelf: "center",
+    textAlign: "center",
     marginVertical: 21
   },
   container1: {
