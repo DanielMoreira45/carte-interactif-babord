@@ -1,11 +1,9 @@
 import React from 'react';
 import {
   StyleSheet,
-  Button,
   View,
   SafeAreaView,
   Text,
-  Alert,
   ImageBackground,
   TouchableOpacity,
   Dimensions,
@@ -13,7 +11,6 @@ import {
 } from 'react-native';
 
 import {NavigationContainer, Link} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 const backImage = require('./assets/backgroundEntry.png');
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const logo = require('./assets/logo_babord.png');
@@ -26,16 +23,13 @@ const EntryScreen = ({navigation}) => (
     <Image source={logo} style={styles.logo}></Image>
       <View style={styles.container}>
         <Text style={styles.title}>
-          Un miel bio ?
-        </Text>
-        <Text style={styles.title}>
-          Ou un café équitable ?
+        Je connais la Beyoncé de Guéret !
         </Text>
         <AppButton
           onPress={() => navigation.navigate("Inscription")}
           title="Creer un compte"
         />
-        <Text style={styles.text}>Déjà chez nous ? <Link to={{ screen: 'Connexion'}} style={styles.link}>
+        <Text style={styles.text}>déjà bâbordien.ne ? <Link to={{ screen: 'Connexion'}} style={styles.link}>
         Connectez-vous
     </Link></Text>
       </View>
@@ -79,7 +73,7 @@ const styles = StyleSheet.create({
   //   flex: 1,
   //   justifyContent: 'center',
     position: 'absolute',
-    top: height * 0.62,
+    top: height * 0.67,
     marginHorizontal: 16,
     alignSelf: "center",
   },
@@ -104,7 +98,7 @@ const styles = StyleSheet.create({
 
   },
   text: {
-    width: 252,
+    textAlign: 'center',
     fontSize: 16,
     lineHeight: 24,
     fontFamily: 'Chivo',
