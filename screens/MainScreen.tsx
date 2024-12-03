@@ -13,6 +13,7 @@ import SearchScreen from './SearchScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CarteScreen from './CarteScreen';
 const logo = require('./assets/logo_babord.png');
+const logoButton = require('./assets/logo_location.png');
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({children, onPress}) => (
     <TouchableOpacity style=  {{
@@ -25,7 +26,7 @@ const CustomTabBarButton = ({children, onPress}) => (
       } }
       onPress = {onPress}>
        {/* <View style = {{width: 70, height: 70, borderTopLeftRadius: 90, borderTopRightRadius: 100, borderBottomLeftRadius: 15, borderBottomRightRadius: 100,  backgroundColor: '#ff3399', transform: [{ rotate: '-45deg'} ]}}>{children}</View>  */}
-       <Image source={logo} style={styles.logo}></Image>
+       <Image source={logoButton} style={styles.logo}></Image>
     </TouchableOpacity>
 )
 
@@ -52,10 +53,6 @@ const MainScreen = ({navigation}) => (
                         case 'Search':
                             iconName = 'search';
                             break;
-                        case 'Maps':
-                            // iconName = 'map';
-                            return <Image source={logo} style={styles.logo}></Image>
-                            break;
                         case 'Notifications':
                             iconName = 'notifications-outline';
                             break;
@@ -72,13 +69,13 @@ const MainScreen = ({navigation}) => (
 >
     <Tab.Screen name="Home" component={HomeScreen}/>
     <Tab.Screen name="Notifications" component={HomeScreen}/>
-    <Tab.Screen name="Profile" component={HomeScreen}/>
-    {/* <Tab.Screen name="Maps" component={CarteScreen}/> */}
-    
     <Tab.Screen name="Maps" component={CarteScreen} options={{tabBarButton: (props) => (
                     <CustomTabBarButton {...props} />
                 )}}/>
     <Tab.Screen name="Search" component={SearchScreen}/>
+    <Tab.Screen name="Profile" component={HomeScreen}/>
+    
+    
 </Tab.Navigator>
 );
 
