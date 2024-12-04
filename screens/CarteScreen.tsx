@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, PermissionsAndroid, Platform, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 
@@ -20,6 +21,7 @@ const MapComposant = () => {
     longitudeDelta: 8.5,
   });
 
+  const navigation = useNavigation();
   const PinImage = require('./assets/pinBabord.png');
   const [selectedMarkerId, setSelectedMarkerId] = useState<number | null>(null);
   const mapRef = useRef<MapView>(null);
@@ -88,6 +90,18 @@ const MapComposant = () => {
     requestLocationPermission();
   }, []);
 
+  const limitTextLength = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) {return text;}
+    // Trouver la position du premier point après la limite
+    const cutIndex = text.indexOf('.', maxLength);
+    // Si aucun point n'est trouvé après la limite, couper simplement à maxLength
+    if (cutIndex === -1) {
+      return text.substring(0, maxLength) + '...';
+    }
+    // Sinon, couper au premier point trouvé après la limite
+    return text.substring(0, cutIndex + 1); // Inclure le point
+  };
+
   // Fonction pour centrer la carte sur le marqueur sélectionné
   const focusOnMarker = (coordinate: { latitude: number, longitude: number }) => {
     if (mapRef.current) {
@@ -106,24 +120,27 @@ const MapComposant = () => {
     flatListRef.current?.scrollToIndex({ index, animated: true }); // Faire défiler la FlatList
   };
 
-  // Fonction pour gérer le clic sur une carte (qui recentre la carte sur le marqueur)
-  const onCardPress = (marker: typeof markers[0], index: number) => {
+  // Fonction pour gérer le clic sur une carte qui permet d'avoir le lien vers les détails
+  const onCardPress = (marker: typeof markers[0]) => {
     setSelectedMarkerId(marker.id); // Mettre à jour l'ID du marqueur sélectionné
-    focusOnMarker(marker.coordinate); // Recentrer la carte
-    flatListRef.current?.scrollToIndex({ index, animated: true });
+    try {
+      navigation.navigate('DetailsConcerts', { marker_id: marker.id });
+    } catch (error) {
+      console.error('Erreur lors de la navigation vers les détails :', error);
+    }
   };
 
   // Affichage de la card
-  const renderCard = ({ item, index }: { item: typeof markers[0], index: number }) => {
+  const renderCard = ({ item }: { item: typeof markers[0] }) => {
     return (
-      <TouchableOpacity onPress={() => onCardPress(item, index)}>
+      <TouchableOpacity onPress={() => onCardPress(item)}>
         <View style={[styles.card, item.id === selectedMarkerId && styles.selectedCard]}>
           <View>
             <Image source={{ uri: item.image }} style={styles.cardimages} />
           </View>
           <View>
             <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardDetails}>{item.details}</Text>
+            <Text style={styles.cardDetails}>{limitTextLength(item.details, 100)}</Text>
           </View>
         </View>
       </TouchableOpacity>
