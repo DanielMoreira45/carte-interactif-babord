@@ -26,6 +26,7 @@ const RegistrationScreen = ({ navigation }) => {
     const [lastName, onChangeLastName] = React.useState('');
     const [email, onChangeEmail] = React.useState('');
     const [password, onChangePassword] = React.useState('');
+    const [ville, onChangeVille] = React.useState('');
 
     return (
         <KeyboardAvoidingView
@@ -64,7 +65,14 @@ const RegistrationScreen = ({ navigation }) => {
                             onChangeText={onChangePassword}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
-                            secureTextEntry={true} // скрытие пароля
+                            secureTextEntry={true}
+                        />
+                        <TextInput
+                            label="Ville"
+                            value={ville}
+                            onChangeText={onChangeVille}
+                            style={styles.input}
+                            activeUnderlineColor="#FF3399"
                         />
                     </View>
 
