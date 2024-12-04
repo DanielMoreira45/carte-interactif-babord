@@ -11,6 +11,7 @@ import {
 
 import LinearGradient from 'react-native-linear-gradient';
 import { Link } from '@react-navigation/native';
+import ArtisteScreen from './ArtisteScreen';
 
 const logo = require('./assets/logo_babord.png');
 const im1 = require('./assets/backgroundConnexion.png');
@@ -81,7 +82,7 @@ const HomeScreen = ({ navigation }) => {
   const renderItemArtiste = ({ item }: { item: typeof Artiste[0] }) => {
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={() => navigation.navigate('ArtisteScreen')}>
         <View style={[styles.card2]}>
           <Image source={item.image} style={styles.cardimages2} />
           <Text style={styles.cardName}>{item.name}</Text>
