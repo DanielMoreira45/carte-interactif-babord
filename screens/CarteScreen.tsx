@@ -1,17 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, PermissionsAndroid, Platform, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, PermissionsAndroid, Platform, FlatList, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-
-type MarkerType = {
-  id: number;
-  coordinate: { latitude: number; longitude: number };
-  title: string;
-  description: string;
-  details: string;
-  image: string;
-};
+import { MarkerType } from './composant/Types';
+import CarteMapComposant from './composant/CarteMapComposant';
 
 const MapComposant = () => {
   const [initialRegion, setInitialRegion] = useState({
@@ -90,18 +83,6 @@ const MapComposant = () => {
     requestLocationPermission();
   }, []);
 
-  const limitTextLength = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) {return text;}
-    // Trouver la position du premier point après la limite
-    const cutIndex = text.indexOf('.', maxLength);
-    // Si aucun point n'est trouvé après la limite, couper simplement à maxLength
-    if (cutIndex === -1) {
-      return text.substring(0, maxLength) + '...';
-    }
-    // Sinon, couper au premier point trouvé après la limite
-    return text.substring(0, cutIndex + 1); // Inclure le point
-  };
-
   // Fonction pour centrer la carte sur le marqueur sélectionné
   const focusOnMarker = (coordinate: { latitude: number, longitude: number }) => {
     if (mapRef.current) {
@@ -117,34 +98,16 @@ const MapComposant = () => {
   const onMarkerPress = (id: number, index: number, coordinate: { latitude: number, longitude: number }) => {
     setSelectedMarkerId(id);
     focusOnMarker(coordinate); // Recentrer la carte sur le POI sélectionné
-    flatListRef.current?.scrollToIndex({ index, animated: true }); // Faire défiler la FlatList
+    flatListRef.current?.scrollToIndex({ index, animated: true });
   };
 
-  // Fonction pour gérer le clic sur une carte qui permet d'avoir le lien vers les détails
-  const onCardPress = (marker: typeof markers[0]) => {
+  const onCardPress = (marker: MarkerType) => {
     setSelectedMarkerId(marker.id); // Mettre à jour l'ID du marqueur sélectionné
     try {
       navigation.navigate('DetailsConcerts', { marker_id: marker.id });
     } catch (error) {
       console.error('Erreur lors de la navigation vers les détails :', error);
     }
-  };
-
-  // Affichage de la card
-  const renderCard = ({ item }: { item: typeof markers[0] }) => {
-    return (
-      <TouchableOpacity onPress={() => onCardPress(item)}>
-        <View style={[styles.card, item.id === selectedMarkerId && styles.selectedCard]}>
-          <View>
-            <Image source={{ uri: item.image }} style={styles.cardimages} />
-          </View>
-          <View>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardDetails}>{limitTextLength(item.details, 100)}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
   };
 
   return (
@@ -175,14 +138,10 @@ const MapComposant = () => {
             </Marker>
           ))}
       </MapView>
-      <FlatList
-        ref={flatListRef}
-        data={markers}
-        horizontal
-        keyExtractor={item => item.id.toString()}
-        renderItem={renderCard}
-        showsHorizontalScrollIndicator={false}
-        style={styles.cardList}
+      <CarteMapComposant
+        markers={markers}
+        selectedMarkerId={selectedMarkerId}
+        onCardPress={onCardPress}
       />
     </View>
   );
