@@ -2,10 +2,8 @@ import React from 'react';
 import {
     StyleSheet,
     TouchableOpacity,
-    View,
     Image
 } from 'react-native';
-
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './HomeScreen';
@@ -13,10 +11,11 @@ import SearchScreen from './SearchScreen';
 import ArtisteScreen from './ArtisteScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CarteScreen from './CarteScreen';
-const logo = require('./assets/logo_babord.png');
+import UserScreen from './UserScreen';
+
 const logoButton = require('./assets/logo_location.png');
 const Tab = createBottomTabNavigator();
-const CustomTabBarButton = ({children, onPress}) => (
+const CustomTabBarButton = ({onPress}) => (
     <TouchableOpacity style=  {{
         top: -30,
         justifyContent: 'center',
@@ -74,9 +73,8 @@ const MainScreen = ({navigation}) => (
                     <CustomTabBarButton {...props} />
                 )}}/>
     <Tab.Screen name="Search" component={SearchScreen}/>
-    <Tab.Screen name="Profile" component={HomeScreen}/>
+    <Tab.Screen name="Profile" component={UserScreen}/>
     <Tab.Screen name="ArtisteScreen" component={ArtisteScreen} options={{tabBarButton: () => null,}}/>
-    
     
 </Tab.Navigator>
 );
