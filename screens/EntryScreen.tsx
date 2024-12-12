@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 
-import {NavigationContainer, Link} from '@react-navigation/native';
+import {Link} from '@react-navigation/native';
 const backImage = require('./assets/backgroundEntry.png');
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const logo = require('./assets/logo_babord.png');
@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Chivo',   
   },
   logo: {
-    width: 94,
-    height: 93,
+    width: 130,
+    height: 130,
     top: 15,
     alignSelf: "center",
 
