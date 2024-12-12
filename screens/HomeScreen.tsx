@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   ImageBackground,
+  ScrollView,
 } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -93,17 +94,19 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
+    
     <LinearGradient
       colors={['#000000', '#FF3399']}
       style={styles.linearGradient}
     >
+      <ScrollView>
       <Image source={logo} style={styles.logo}></Image>
       <Text style={styles.title}>
         Ohé explorateurice à grandes oreilles !
       </Text>
 
       <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>Actualités</Text>
+        <Text style={styles.subtitle}>Prochains concerts</Text>
         <Link to={{ screen: 'Connexion'}} style={styles.link}>View All</Link>
       </View>
 
@@ -133,7 +136,9 @@ const HomeScreen = ({ navigation }) => {
           style={styles.cardList}
         />
       </View>
+      </ScrollView>
     </LinearGradient>
+    
   );
 }
 
