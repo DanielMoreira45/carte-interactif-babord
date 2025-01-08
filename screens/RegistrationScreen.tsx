@@ -68,7 +68,7 @@ const RegistrationScreen = ({ navigation }) => {
                             secureTextEntry={true}
                         />
                         <TextInput
-                            label="Ville"
+                            label="Ville/Code postale"
                             value={ville}
                             onChangeText={onChangeVille}
                             style={styles.input}

@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
     borderRadius: 48,
     paddingVertical: 16,
     paddingHorizontal: 32,
-    width: 182,
-    height: 48,
+    minWidth: 182,
+    minHeight: 48,
     alignSelf: "center",
     gap: 10,
     marginTop: 65,
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     top: height * 0.67,
     marginHorizontal: 16,
     alignSelf: "center",
+    
   },
   view: {
     //flex: 1,
@@ -102,13 +103,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontFamily: 'Chivo',
-    color: '#000000'
+    color: '#000000',
+    
   },
   link: {
     color: '#FF3399',
     fontSize: 16,
     lineHeight: 24,
-  }
+  },
 });
 
 export default EntryScreen;
