@@ -276,14 +276,13 @@ const ScreenComposant = ({ navigation, logoProfile, title, isArtist }) => {
                   </TouchableOpacity>
                 )}
 
-                {isModalVisible && (
+
+            </ScrollView>
+            {isModalVisible && (
                     <ModalComposant
                         content={modalContent}
                     />
                 )}
-
-
-            </ScrollView>
         </ImageBackground>);
 };
 
@@ -329,8 +328,10 @@ const styles = StyleSheet.create({
     },
     logo: {
         alignSelf: "center",
-        width: width / 1.7,
-        height: width / 1.7,
+        //width: width / 1.7,
+        //height: width / 1.7,
+        //width: height * 0.10,
+        height: height * 0.28,
         marginTop: 15,
     },
     suivreButtonContainer: {
