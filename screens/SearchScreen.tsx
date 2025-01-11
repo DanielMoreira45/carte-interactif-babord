@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -24,16 +24,25 @@ const Tab = createBottomTabNavigator();
 const background = require('./assets/backgroundSearchScreen.png');
 const imageConcert = require('./assets/imageConcert.jpg');
 
-const rectangles = [
-  { id: '1', title: 'Recherche 1', subtitle: 'Détail de l\'élément recherché 1', type: 'Type 1' },
-  { id: '2', title: 'Recherche 2', subtitle: 'Détail de l\'élément recherché 2', type: 'Type 2' },
-  { id: '3', title: 'Recherche 3', subtitle: 'Détail de l\'élément recherché 3', type: 'Type 3' },
-  { id: '4', title: 'Recherche 4', subtitle: 'Détail de l\'élément recherché 4', type: 'Type 4' },
-  { id: '5', title: 'Recherche 5', subtitle: 'Détail de l\'élément recherché 5', type: 'Type 5' },
-];
-
 const SearchScreen = ({navigation}) => {
+  const [rectangles, setRectangles] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    fetch('http://86.218.243.242:8000/api/groupes/', {
+      headers: {
+        'Permission': 'web_user',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Mettez à jour l'état des box des groupes avec les données récupérées
+        setRectangles(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
 
   return (
     <ImageBackground source={background} style={[StyleSheet.absoluteFill]}>
@@ -58,9 +67,9 @@ const SearchScreen = ({navigation}) => {
           <TouchableOpacity style={styles.rectangle} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
             <ImageBackground source={imageConcert} style={styles.imageBackground} imageStyle={styles.imageStyle}>
               <View style={styles.textContainer}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.subtitle}>{item.subtitle}</Text>
-                <Text style={styles.type}>{item.type}</Text>
+                <Text style={styles.title}>{item.libelle}</Text>
+                <Text style={styles.subtitle}>{item.description}</Text>
+                <Text style={styles.type}>Département : {item.departement}</Text>
                 <TouchableOpacity style={styles.moreButton} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
                   <Text style={styles.moreButtonText}>Voir plus</Text>
                 </TouchableOpacity>
@@ -68,7 +77,7 @@ const SearchScreen = ({navigation}) => {
             </ImageBackground>
           </TouchableOpacity>
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.listContainer}
       />
       <Modal
