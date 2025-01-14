@@ -12,7 +12,8 @@ import ArtisteScreen from './ArtisteScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CarteScreen from './CarteScreen';
 import UserScreen from './UserScreen';
-
+import DetailsConcertsScreen from './DetailsConcertsScreen';
+const logo = require('./assets/logo_babord.png');
 const logoButton = require('./assets/logo_location.png');
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({onPress}) => (
@@ -64,18 +65,21 @@ const MainScreen = ({navigation}) => (
                     }
                     return <Ionicons name={iconName} size={24} color={'#C7C7C7'} />;
                 },
-                
             })}
 >
-    <Tab.Screen name="Home" component={HomeScreen}/>
+<Tab.Screen name="Home" component={HomeScreen}/>
     <Tab.Screen name="Notifications" component={HomeScreen}/>
-    <Tab.Screen name="Maps" component={CarteScreen} options={{tabBarButton: (props) => (
-                    <CustomTabBarButton {...props} />
-                )}}/>
+    <Tab.Screen name="Maps" component={CarteScreen} options={{tabBarButton: (props) => (<CustomTabBarButton {...props} />)}}/>
     <Tab.Screen name="Search" component={SearchScreen}/>
     <Tab.Screen name="Profile" component={UserScreen}/>
     <Tab.Screen name="ArtisteScreen" component={ArtisteScreen} options={{tabBarButton: () => null,}}/>
-    
+    <Tab.Screen
+        name="DetailsConcerts"
+        component={DetailsConcertsScreen}
+        options={{
+          tabBarButton: () => null, // Cache le bouton dans la barre pour naviguer uniquement par programmation
+        }}
+      />
 </Tab.Navigator>
 );
 

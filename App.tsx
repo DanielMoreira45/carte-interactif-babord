@@ -4,6 +4,19 @@ import ConnectionScreen from "./screens/ConnectionScreen";
 import RegistrationScreen from "./screens/RegistrationScreen";
 import MainScreen from "./screens/MainScreen";
 import CarteScreen from './screens/CarteScreen';
+import {
+  StyleSheet,
+  Button,
+  View,
+  SafeAreaView,
+  Text,
+  Alert,
+  ImageBackground,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+  Linking,
+} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -29,10 +42,6 @@ const App = () => (
       name="Main"
       component={MainScreen}
       options={{headerShown: false}}
-      />
-    <Stack.Screen
-      name="Carte"
-      component={CarteScreen}
       />
   </Stack.Navigator>
 </NavigationContainer>
