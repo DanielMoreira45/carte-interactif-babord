@@ -7,10 +7,12 @@ import {
   Image,
   TouchableOpacity,
   ImageBackground,
+  ScrollView,
 } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
 import { Link } from '@react-navigation/native';
+import ArtisteScreen from './ArtisteScreen';
 
 const logo = require('./assets/logo_babord.png');
 const im1 = require('./assets/backgroundConnexion.png');
@@ -70,7 +72,9 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.content}>
               <Text style={styles.cardTitle}>{item.title}</Text>
               <Text style={styles.card1Details}>{item.details}</Text>
-              <Link to={{ screen: '' }} style={styles.cardLink}>Voir plus</Link>
+              <View style={styles.cardLink}>
+              <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
+            </View>
             </View>
           </ImageBackground>
         </View>
@@ -81,7 +85,7 @@ const HomeScreen = ({ navigation }) => {
   const renderItemArtiste = ({ item }: { item: typeof Artiste[0] }) => {
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={() => navigation.navigate('ArtisteScreen')}>
         <View style={[styles.card2]}>
           <Image source={item.image} style={styles.cardimages2} />
           <Text style={styles.cardName}>{item.name}</Text>
@@ -92,17 +96,19 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
+    
     <LinearGradient
       colors={['#000000', '#FF3399']}
       style={styles.linearGradient}
     >
+      <ScrollView style={{marginBottom: 65}}>
       <Image source={logo} style={styles.logo}></Image>
       <Text style={styles.title}>
         Ohé explorateurice à grandes oreilles !
       </Text>
 
       <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>Actualités</Text>
+        <Text style={styles.subtitle}>Prochains concerts</Text>
         <Link to={{ screen: 'Connexion'}} style={styles.link}>View All</Link>
       </View>
 
@@ -132,7 +138,9 @@ const HomeScreen = ({ navigation }) => {
           style={styles.cardList}
         />
       </View>
+      </ScrollView>
     </LinearGradient>
+    
   );
 }
 
@@ -161,7 +169,7 @@ const styles = StyleSheet.create({
   },
   container2: {
     flex: 1,
-    maxHeight: 255
+    maxHeight: 255,
   },
   cardList: {
     marginHorizontal: 15
@@ -245,6 +253,7 @@ const styles = StyleSheet.create({
   cardLink: {
     marginTop: 45,
     marginLeft: 18,
+    marginBottom: 18,
     backgroundColor: "#000",
     borderRadius: 18,
     width: "30%",
@@ -252,10 +261,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     textAlignVertical: "center",
+    alignItems: "center",
     height: 28,
     maxWidth: 70,
-    fontSize: 12
-
+    fontSize: 12,
+    justifyContent: "center",
+  },
+  cardLinkText:{
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    alignSelf: "center",
+    height: 28,
+    maxWidth: 70,
+    fontSize: 12,
+    textAlign: "center",
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
