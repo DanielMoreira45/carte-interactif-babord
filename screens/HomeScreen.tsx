@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -12,32 +12,40 @@ import {
 
 import LinearGradient from 'react-native-linear-gradient';
 import { Link } from '@react-navigation/native';
-import ArtisteScreen from './ArtisteScreen';
 
 const logo = require('./assets/logo_babord.png');
 const im1 = require('./assets/backgroundConnexion.png');
 const im2 = require('./assets/backgroundEntry.png');
 
-const Actualite = [
-  {
-    id: 1,
-    title: 'Nom de l’actualité',
-    details: 'détail de l’actualité',
-    image: im1,
-  },
-  {
-    id: 2,
-    title: 'Nom de l’actualité',
-    details: 'détail de l’actualité',
-    image: im1,
-  },
-  {
-    id: 3,
-    title: 'Nom de l’actualité',
-    details: 'détail de l’actualité',
-    image: im1,
-  },
-];
+type ConcertType = {
+  id: number;
+  intitule: string;
+  date_debut: string;
+  lieu: string;
+  grope: number;
+};
+
+
+// const Actualite = [
+//   {
+//     id: 1,
+//     title: 'Nom de l’actualité',
+//     details: 'détail de l’actualité',
+//     image: im1,
+//   },
+//   {
+//     id: 2,
+//     title: 'Nom de l’actualité',
+//     details: 'détail de l’actualité',
+//     image: im1,
+//   },
+//   {
+//     id: 3,
+//     title: 'Nom de l’actualité',
+//     details: 'détail de l’actualité',
+//     image: im1,
+//   },
+// ];
 
 const Artiste = [
   {
@@ -61,17 +69,45 @@ const Artiste = [
 ];
 
 const HomeScreen = ({ navigation }) => {
+const [Actualite, setRectangles] = useState<ConcertType[]>([]);
 
+  useEffect(() => {
+    const loadConcerts = async () => {
+      try {
+        const response = await fetch('http://86.218.243.242:8000/api/concerts/', {
+          method: 'GET',
+          headers: {
+            'permission': 'web_user',
+          },
+        });
+        const data = await response.json();
+        //console.log('Données des marqueurs :', data);
+        setRectangles(data);
+      } catch (error) {
+        console.error('Erreur lors du chargement des marqueurs :', error);
+      }
+    };
+    loadConcerts();
+  }, []);
+
+  const onCardPress = (concert: typeof Actualite[0]) => {
+    try {
+      navigation.navigate('DetailsConcerts', { marker_id: concert.id });
+    } catch (error) {
+      console.error('Erreur lors de la navigation vers les détails :', error);
+    }
+  };
+  
   const renderItemActualite = ({ item }: { item: typeof Actualite[0] }) => {
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={() => onCardPress(item)}>
         <View style={[styles.card1]}>
-          <ImageBackground source={item.image} style={styles.cardimages1}>
+          <ImageBackground source={im2} style={styles.cardimages1}>
             <View style={styles.overlay} />
             <View style={styles.content}>
-              <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.card1Details}>{item.details}</Text>
+              <Text style={styles.cardTitle} numberOfLines={2}   ellipsizeMode="tail" >{item.intitule}</Text>
+              <Text style={styles.card1Details}>{item.date_debut}</Text>
               <View style={styles.cardLink}>
               <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
             </View>
@@ -188,6 +224,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     flexDirection: 'row',
     overflow: 'hidden',
+    position: 'relative',
+    justifyContent: 'space-between',
   },
   card2: {
     display: "flex",
@@ -251,12 +289,14 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   cardLink: {
-    marginTop: 45,
+    position: 'absolute',
+    top: 130,
+    //marginTop: 45,
     marginLeft: 18,
     marginBottom: 18,
     backgroundColor: "#000",
     borderRadius: 18,
-    width: "30%",
+    width: 150,
     color: "#FFFFFF",
     fontWeight: "bold",
     textAlign: "center",

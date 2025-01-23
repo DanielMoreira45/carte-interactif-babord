@@ -14,7 +14,6 @@ import {
 import { TextInput } from 'react-native-paper';
 import { Link } from '@react-navigation/native';
 
-
 const backImage = require('./assets/backgroundConnexion.png');
 
 const { width } = Dimensions.get('window');
