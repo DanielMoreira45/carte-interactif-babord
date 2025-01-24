@@ -14,7 +14,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Link } from '@react-navigation/native';
 
 const logo = require('./assets/logo_babord.png');
-const im1 = require('./assets/backgroundConnexion.png');
 const im2 = require('./assets/backgroundEntry.png');
 
 type ConcertType = {
@@ -25,6 +24,11 @@ type ConcertType = {
   grope: number;
 };
 
+type ArtisteType = {
+  id: number;
+  libelle: string;
+  description: string;
+};
 
 // const Actualite = [
 //   {
@@ -47,29 +51,30 @@ type ConcertType = {
 //   },
 // ];
 
-const Artiste = [
-  {
-    id: 1,
-    name: 'Nom de l’artiste',
-    details: "détails",
-    image: im2,
-  },
-  {
-    id: 2,
-    name: 'Nom de l’artiste',
-    details: "détails",
-    image: im2,
-  },
-  {
-    id: 3,
-    name: 'Nom de l’artiste',
-    details: "détails",
-    image: im2,
-  },
-];
+// const Artiste = [
+//   {
+//     id: 1,
+//     name: 'Nom de l’artiste',
+//     details: "détails",
+//     image: im2,
+//   },
+//   {
+//     id: 2,
+//     name: 'Nom de l’artiste',
+//     details: "détails",
+//     image: im2,
+//   },
+//   {
+//     id: 3,
+//     name: 'Nom de l’artiste',
+//     details: "détails",
+//     image: im2,
+//   },
+// ];
 
 const HomeScreen = ({ navigation }) => {
-const [Actualite, setRectangles] = useState<ConcertType[]>([]);
+  const [actualites, setRectangles] = useState<ConcertType[]>([]);
+  const [artistes, setArtistes] = useState<ArtisteType[]>([]);
 
   useEffect(() => {
     const loadConcerts = async () => {
@@ -88,29 +93,53 @@ const [Actualite, setRectangles] = useState<ConcertType[]>([]);
       }
     };
     loadConcerts();
+    const loadArtists = async () => {
+      try {
+        const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+          method: 'GET',
+          headers: {
+            'permission': 'web_user',
+          },
+        });
+        const data = await response.json();
+        //console.log('Données des marqueurs :', data);
+        setArtistes(data);
+      } catch (error) {
+        console.error('Erreur lors du chargement des marqueurs :', error);
+      }
+    };
+    loadArtists();
   }, []);
 
-  const onCardPress = (concert: typeof Actualite[0]) => {
+  const onConcertPress = (concert: typeof actualites[0]) => {
     try {
       navigation.navigate('DetailsConcerts', { marker_id: concert.id });
     } catch (error) {
       console.error('Erreur lors de la navigation vers les détails :', error);
     }
   };
-  
-  const renderItemActualite = ({ item }: { item: typeof Actualite[0] }) => {
+
+  const onArtistePress = (item: typeof artistes[0]) => {
+    try {
+      navigation.navigate('ArtisteScreen', { navigation: navigation, profile_id: item.id })
+    } catch (error) {
+      console.error('Erreur lors de la navigation vers les détails :', error);
+    }
+  };
+
+  const renderItemActualite = ({ item }: { item: typeof actualites[0] }) => {
 
     return (
-      <TouchableOpacity onPress={() => onCardPress(item)}>
+      <TouchableOpacity onPress={() => onConcertPress(item)}>
         <View style={[styles.card1]}>
           <ImageBackground source={im2} style={styles.cardimages1}>
             <View style={styles.overlay} />
             <View style={styles.content}>
-              <Text style={styles.cardTitle} numberOfLines={2}   ellipsizeMode="tail" >{item.intitule}</Text>
+              <Text style={styles.cardTitle} numberOfLines={2} ellipsizeMode="tail" >{item.intitule}</Text>
               <Text style={styles.card1Details}>{item.date_debut}</Text>
               <View style={styles.cardLink}>
-              <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
-            </View>
+                <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
+              </View>
             </View>
           </ImageBackground>
         </View>
@@ -118,13 +147,13 @@ const [Actualite, setRectangles] = useState<ConcertType[]>([]);
     );
   };
 
-  const renderItemArtiste = ({ item }: { item: typeof Artiste[0] }) => {
+  const renderItemArtiste = ({ item }: { item: typeof artistes[0] }) => {
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('ArtisteScreen')}>
+      <TouchableOpacity onPress={() => onArtistePress(item)}>
         <View style={[styles.card2]}>
-          <Image source={item.image} style={styles.cardimages2} />
-          <Text style={styles.cardName}>{item.name}</Text>
+          <Image source={im2} style={styles.cardimages2} />
+          <Text style={styles.cardName}>{item.libelle}</Text>
           <Text style={styles.card2Details}>Détail ...</Text>
         </View>
       </TouchableOpacity>
@@ -132,51 +161,50 @@ const [Actualite, setRectangles] = useState<ConcertType[]>([]);
   };
 
   return (
-    
     <LinearGradient
       colors={['#000000', '#FF3399']}
       style={styles.linearGradient}
     >
-      <ScrollView style={{marginBottom: 65}}>
-      <Image source={logo} style={styles.logo}></Image>
-      <Text style={styles.title}>
-        Ohé explorateurice à grandes oreilles !
-      </Text>
+      <ScrollView style={{ marginBottom: 65 }}>
+        <Image source={logo} style={styles.logo}></Image>
+        <Text style={styles.title}>
+          Ohé explorateurice à grandes oreilles !
+        </Text>
 
-      <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>Prochains concerts</Text>
-        <Link to={{ screen: 'Connexion'}} style={styles.link}>View All</Link>
-      </View>
+        <View style={styles.subtitleContainer}>
+          <Text style={styles.subtitle}>Prochains concerts</Text>
+          <Link to={{ screen: 'Connexion' }} style={styles.link}>View All</Link>
+        </View>
 
 
 
-      <View style={styles.container1}>
-        <FlatList
-          data={Actualite}
-          horizontal
-          renderItem={renderItemActualite}
-          keyExtractor={item => item.id.toString()}
-          showsHorizontalScrollIndicator={false}
-          style={styles.cardList}
-        />
-      </View>
-      <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>Proche de chez vous</Text>
-        <Link to={{ screen: 'Connexion'}} style={styles.link}>View All</Link>
-      </View>
-      <View style={styles.container2}>
-        <FlatList
-          data={Artiste}
-          horizontal
-          renderItem={renderItemArtiste}
-          keyExtractor={item => item.id.toString()}
-          showsHorizontalScrollIndicator={false}
-          style={styles.cardList}
-        />
-      </View>
+        <View style={styles.container1}>
+          <FlatList
+            data={actualites}
+            horizontal
+            renderItem={renderItemActualite}
+            keyExtractor={item => item.id.toString()}
+            showsHorizontalScrollIndicator={false}
+            style={styles.cardList}
+          />
+        </View>
+        <View style={styles.subtitleContainer}>
+          <Text style={styles.subtitle}>Proche de chez vous</Text>
+          <Link to={{ screen: 'Connexion' }} style={styles.link}>View All</Link>
+        </View>
+        <View style={styles.container2}>
+          <FlatList
+            data={artistes}
+            horizontal
+            renderItem={renderItemArtiste}
+            keyExtractor={item => item.id.toString()}
+            showsHorizontalScrollIndicator={false}
+            style={styles.cardList}
+          />
+        </View>
       </ScrollView>
     </LinearGradient>
-    
+
   );
 }
 
@@ -307,7 +335,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     justifyContent: "center",
   },
-  cardLinkText:{
+  cardLinkText: {
     color: "#FFFFFF",
     fontWeight: "bold",
     alignSelf: "center",

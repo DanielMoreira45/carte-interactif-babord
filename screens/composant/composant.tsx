@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -46,42 +46,74 @@ const ButtonComposant: React.FC<ButtonComposantProps> = ({ onPress, text, style 
     );
 };
 
-
 const AppButton = ({ onPress, title }) => (
     <TouchableOpacity onPress={onPress} style={styles.suivreButtonContainer}>
         <Text style={styles.suivreButtonText}>{title}</Text>
     </TouchableOpacity>
 );
 
+type GroupType = {
+    id: number;
+    libelle: string;
+    description: string;
+    nb_homme: string;
+    nb_femme: number;
+    producteur: string;
+    lien_producteur: string;
+    departement: string;
+};
 
+const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
+    const [groups, setRectangles] = useState<GroupType[]>([]);
 
-const ScreenComposant = ({ navigation, logoProfile, title, isArtist }) => {
+    useEffect(() => {
+        const loadGroupes = async () => {
+            try {
+                const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+                    method: 'GET',
+                    headers: {
+                        'permission': 'web_user',
+                    },
+                });
+                const data = await response.json();
+                // console.log('Données des marqueurs :', data);
+                setRectangles(data);
+            } catch (error) {
+                console.error('Erreur lors du chargement des marqueurs :', error);
+            }
+        };
+        loadGroupes();
+    }, []);
+
+    const group = groups.find((group) => group.id === profile_id);
+    //console.log('Données du group :', profile_id);
+
     const Actualite = [
         {
-          id: 1,
-          title: 'Nom de l’actualité',
-          details: 'détail de l’actualité',
-          image: image,
+            id: 1,
+            title: 'Nom de l’actualité',
+            details: 'détail de l’actualité',
+            image: image,
         },
         {
-          id: 2,
-          title: 'Nom de l’actualité',
-          details: 'détail de l’actualité',
-          image: image,
+            id: 2,
+            title: 'Nom de l’actualité',
+            details: 'détail de l’actualité',
+            image: image,
         },
         {
-          id: 3,
-          title: 'Nom de l’actualité',
-          details: 'détail de l’actualité',
-          image: image,
+            id: 3,
+            title: 'Nom de l’actualité',
+            details: 'détail de l’actualité',
+            image: image,
         },
         {
             id: 4,
             title: 'Nom de l’actualité',
             details: 'détail de l’actualité',
             image: image,
-          },
-      ];
+        },
+    ];
     const ModalComposant = ({ content }) => {
         return (
             <View style={styles.modalOverlay}>
@@ -93,10 +125,10 @@ const ScreenComposant = ({ navigation, logoProfile, title, isArtist }) => {
                         <Ionicons name="close" size={24} color="#000" />
                     </TouchableOpacity>
                     <View style={{ marginTop: 50 }}>
-                    <ScrollView>
+                        <ScrollView>
                             {content}
-                    </ScrollView>
-                            
+                        </ScrollView>
+
                     </View>
                 </View>
             </View>
@@ -106,22 +138,22 @@ const ScreenComposant = ({ navigation, logoProfile, title, isArtist }) => {
     const renderItemActualite = ({ item }: { item: typeof Actualite[0] }) => {
 
         return (
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-            <View style={[styles.card1]}>
-              <ImageBackground source={item.image} style={styles.cardimages1}>
-                <View style={styles.overlay} />
-                <View style={styles.content}>
-                  <Text style={styles.cardTitle}>{item.title}</Text>
-                  <Text style={styles.card1Details}>{item.details}</Text>
-                  <View style={styles.cardLink}>
-                  <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <View style={[styles.card1]}>
+                    <ImageBackground source={item.image} style={styles.cardimages1}>
+                        <View style={styles.overlay} />
+                        <View style={styles.content}>
+                            <Text style={styles.cardTitle}>{item.title}</Text>
+                            <Text style={styles.card1Details}>{item.details}</Text>
+                            <View style={styles.cardLink}>
+                                <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
+                            </View>
+                        </View>
+                    </ImageBackground>
                 </View>
-                </View>
-              </ImageBackground>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
         );
-      };
+    };
 
     const [isModalVisible, setModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
@@ -134,53 +166,53 @@ const ScreenComposant = ({ navigation, logoProfile, title, isArtist }) => {
         {
             id: 1,
             title: isArtist ? "Description" : "Mes infos",
-            content: isArtist ? (
+            content: isArtist && group ? (
                 <View >
-                    <Text style={styles.modalTitle}>Description de NOM ARTISTE</Text>
-                    
-                        <View style={styles.modalTextContainer}>
-                            <Text style={styles.modalText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-                                sed do eiusmod tempor incididunt ut labore</Text>
+                    <Text style={styles.modalTitle}>Description de {group.libelle}</Text>
+
+                    <View style={styles.modalTextContainer}>
+                        <Text style={styles.modalText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                            sed do eiusmod tempor incididunt ut labore</Text>
                         <Text style={styles.modalSubtitle}>Nombre de personnes</Text>
-                        <View style={{ flexDirection: 'row', marginVertical: 5}}>
+                        <View style={{ flexDirection: 'row', marginVertical: 5 }}>
                             <Image
                                 source={logo_homme}
                                 style={{ width: 35, height: 35, }}
                             />
-                            <Text style={styles.modalText}>5 hommes</Text>
+                            <Text style={styles.modalText}>{group.nb_homme} hommes</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', marginVertical: 5}}>
+                        <View style={{ flexDirection: 'row', marginVertical: 5 }}>
                             <Image
                                 source={logo_femme}
                                 style={{ width: 35, height: 35, }}
                             />
-                            <Text style={styles.modalText}>5 femmes</Text>
+                            <Text style={styles.modalText}>{group.nb_femme} femmes</Text>
                         </View>
                         <Text style={styles.modalSubtitle}>Producteurice</Text>
-                        <Link to={{ screen: '' }} style={styles.modalText}>Lien</Link>
+                        <TouchableOpacity onPress={() => Linking.openURL(group.lien_producteur)}>
+                            <Text style={styles.modalLien}>{group.producteur}</Text>
+                        </TouchableOpacity>
                         <Text style={styles.modalSubtitle}>Département d’origine</Text>
-                        <Text style={styles.modalText}>Lien</Text>
-                        </View>
+                        <Text style={styles.modalText}>{group.departement}</Text>
+                    </View>
                 </View>
             ) : (
-                
-                <View style={{ flex: 1 }}>
-                <Text style={styles.modalTitle}>Description de NOM User</Text>
-                
-                    <View style={styles.modalTextContainer}>
-                    
-                    <Text style={styles.modalSubtitle}>Nom</Text>
-                    
-                        <Text style={styles.modalText}>Nom</Text>
-                    
-                    <Text style={styles.modalSubtitle}>Prénom</Text>
-                    <Text style={styles.modalText}>Prenom</Text>
-                    <Text style={styles.modalSubtitle}>Email</Text>
-                    <Text style={styles.modalText}>Email</Text>
-                    </View>
-            </View>
 
-                
+                <View style={{ flex: 1 }}>
+                    <Text style={styles.modalTitle}>Description de NOM User</Text>
+
+                    <View style={styles.modalTextContainer}>
+
+                        <Text style={styles.modalSubtitle}>Nom</Text>
+
+                        <Text style={styles.modalText}>Nom</Text>
+
+                        <Text style={styles.modalSubtitle}>Prénom</Text>
+                        <Text style={styles.modalText}>Prenom</Text>
+                        <Text style={styles.modalSubtitle}>Email</Text>
+                        <Text style={styles.modalText}>Email</Text>
+                    </View>
+                </View>
             )
         },
         {
@@ -189,31 +221,31 @@ const ScreenComposant = ({ navigation, logoProfile, title, isArtist }) => {
             content: isArtist ? (
                 <View style={{ flex: 1 }}>
                     <Text style={styles.modalTitle}>Prochains concerts de NOM ARTISTE</Text>
-                    
-                        <View style={styles.container1}>
-                            <FlatList
+
+                    <View style={styles.container1}>
+                        <FlatList
                             data={Actualite}
                             renderItem={renderItemActualite}
                             keyExtractor={item => item.id.toString()}
                             showsHorizontalScrollIndicator={false}
                             style={styles.cardList}
-                            />
-                        </View>
+                        />
+                    </View>
                 </View>
-                
+
             ) : (
                 <View style={{ flex: 1 }}>
                     <Text style={styles.modalTitle}>Artistes Suivies</Text>
-                  
-                        <View style={styles.container1}>
-                            <FlatList
+
+                    <View style={styles.container1}>
+                        <FlatList
                             data={Actualite}
                             renderItem={renderItemActualite}
                             keyExtractor={item => item.id.toString()}
                             showsHorizontalScrollIndicator={false}
                             style={styles.cardList}
-                            />
-                        </View>
+                        />
+                    </View>
                 </View>
             )
         },
@@ -222,68 +254,73 @@ const ScreenComposant = ({ navigation, logoProfile, title, isArtist }) => {
             title: isArtist ? "Liens" : "Mes événements\npassés",
             content: isArtist ? (
                 <View>
-                <Text style={styles.modalTitle}>Liens de NOM ARTISTE</Text>
-            <View style={styles.modalTextContainer}>
-                <Text style={styles.modalText}>Site web:</Text>
-                <Text style={styles.modalText}>Youtube:</Text>
-                <Text style={styles.modalText}>Facebook:</Text>
-                <Text style={styles.modalText}>Instagram:</Text>
-                
-            </View>
-            </View>
+                    <Text style={styles.modalTitle}>Liens de NOM ARTISTE</Text>
+                    <View style={styles.modalTextContainer}>
+                        <Text style={styles.modalText}>Site web:</Text>
+                        <Text style={styles.modalText}>Youtube:</Text>
+                        <Text style={styles.modalText}>Facebook:</Text>
+                        <Text style={styles.modalText}>Instagram:</Text>
+
+                    </View>
+                </View>
             ) : (
                 <View style={{ flex: 1 }}>
                     <Text style={styles.modalTitle}>Evenements Suivies</Text>
-                    
-                        <View style={styles.container1}>
-                            <FlatList
+
+                    <View style={styles.container1}>
+                        <FlatList
                             data={Actualite}
                             renderItem={renderItemActualite}
                             keyExtractor={item => item.id.toString()}
                             showsHorizontalScrollIndicator={false}
                             style={styles.cardList}
-                            />
-                        </View>
+                        />
+                    </View>
                 </View>
             )
         },
     ];
-    return (
-        <ImageBackground source={backImage} style={styles.image}>
-            <ScrollView style={{marginBottom: 65}}>
-                <Image source={logoProfile} style={styles.logo} resizeMode="contain"></Image>
-                <TitreComposant text={title} />
-                <View>
-                    {isArtist ? (
-                        <AppButton
-                            onPress={() => navigation.navigate("Main")}
-                            title="Suivre"
+    if (group) {
+        return (
+            <ImageBackground source={backImage} style={styles.image}>
+                <ScrollView style={{ marginBottom: 65 }}>
+                    <Image source={logoProfile} style={styles.logo} resizeMode="contain"></Image>
+
+                    <TitreComposant text={group.libelle} />
+
+
+                    <View>
+                        {isArtist ? (
+                            <AppButton
+                                onPress={() => navigation.navigate("Main")}
+                                title="Suivre"
+                            />
+                        ) : null}
+                    </View>
+                    {buttonData.map((button) => (
+                        <ButtonComposant
+                            key={button.id}
+                            onPress={() => toggleModal(button.content)}
+                            text={button.title}
+                            style={button.id % 2 === 0 ? styles.right : styles.left}
                         />
-                    ) : null}
-                </View>
-                {buttonData.map((button) => (
-                    <ButtonComposant
-                        key={button.id}
-                        onPress={() => toggleModal(button.content)}
-                        text={button.title}
-                        style={button.id % 2 === 0 ? styles.right : styles.left}
-                    />
-                ))}
+                    ))}
 
-                {isArtist && (
-                    <TouchableOpacity onPress={() => Linking.openURL('https://www.label-babord.fr/embarquer/ ?')}>
-                    <Text style={styles.link}>Bâbord j’adore alors j’adhère !</Text>
-                  </TouchableOpacity>
-                )}
+                    {isArtist && (
+                        <TouchableOpacity onPress={() => Linking.openURL('https://www.label-babord.fr/embarquer/ ?')}>
+                            <Text style={styles.link}>Bâbord j’adore alors j’adhère !</Text>
+                        </TouchableOpacity>
+                    )}
 
 
-            </ScrollView>
-            {isModalVisible && (
+                </ScrollView>
+                {isModalVisible && (
                     <ModalComposant
                         content={modalContent}
                     />
                 )}
-        </ImageBackground>);
+            </ImageBackground>);
+    }
 };
 
 const styles = StyleSheet.create({
@@ -409,7 +446,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         //marginVertical: 5,
     },
-    modalImage:{
+    modalImage: {
         maxWidth: width * 0.7,
         height: height * 0.15,
         borderRadius: 18,
@@ -417,11 +454,11 @@ const styles = StyleSheet.create({
     container1: {
         //flex: 1,
         //maxHeight: 180
-      },
-      cardList: {
+    },
+    cardList: {
         //marginHorizontal: 15
-      },
-      card1: {
+    },
+    card1: {
         //width: 290,
         width: width * 0.678,
         //height: 170,
@@ -437,101 +474,108 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         flexDirection: 'row',
         overflow: 'hidden',
-      },
-    
-      selectedCard: {
+    },
+
+    selectedCard: {
         borderColor: 'blue',
         borderWidth: 2,
-      },
-      cardTitle: {
+    },
+    cardTitle: {
         paddingTop: 10,
         fontSize: 30,
         fontWeight: 'bold',
         color: '#FFF',
         marginLeft: 18,
-      },
-      cardName: {
+    },
+    cardName: {
         paddingTop: 10,
         fontSize: 16,
         fontWeight: 'bold',
         color: '#FFF',
         marginLeft: 18,
-      },
-      card1Details: {
+    },
+    card1Details: {
         fontSize: 14,
         color: '#FFF',
         marginTop: 5,
         maxWidth: 210,
-        fontWeight: "bold",
+        fontWeight: 'bold',
         marginLeft: 18,
-      },
+    },
 
-      cardimages1: {
-        width: "100 %",
-        height: "100 %",
-      },
+    cardimages1: {
+        width: '100 %',
+        height: '100 %',
+    },
 
-      cardLink: {
+    cardLink: {
         marginTop: 45,
         marginLeft: 18,
-        backgroundColor: "#000",
+        backgroundColor: '#000',
         borderRadius: 18,
         width: "30%",
         color: "#FFFFFF",
         fontWeight: "bold",
         textAlign: "center",
         textAlignVertical: "center",
-        alignItems: "center",
+        alignItems: 'center',
         height: 28,
         maxWidth: 70,
         fontSize: 12,
-        justifyContent: "center",
-      },
-      cardLinkText:{
-        color: "#FFFFFF",
-        fontWeight: "bold",
-        alignSelf: "center",
+        justifyContent: 'center',
+    },
+    cardLinkText: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+        alignSelf: 'center',
         height: 28,
         maxWidth: 70,
         fontSize: 12,
-        textAlign: "center",
-      },
-      overlay: {
+        textAlign: 'center',
+    },
+    overlay: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         borderRadius: 16,
-      },
-      content: {
+    },
+    content: {
         position: 'absolute',
         opacity: 1
-      },
-      linkBabordContainer: {
+    },
+    linkBabordContainer: {
         elevation: 1,
-        backgroundColor: "#FF3399",
+        backgroundColor: '#FF3399',
         borderRadius: 48,
         paddingVertical: 5,
         paddingHorizontal: 20,
         //minWidth: 182,
         //minHeight: 48,
-        alignSelf: "center",
+        alignSelf: 'center',
         gap: 10,
         marginTop: 25,
         marginBottom: 25,
-      },
-      linkBabordText: {
+    },
+    linkBabordText: {
         fontSize: 16,
-        color: "#fff",
-        alignSelf: "center",
+        color: '#fff',
+        alignSelf: 'center',
         fontFamily: 'Chivo',
         lineHeight: 16,
-      },
-      link: {
+    },
+    link: {
         textAlign: 'center',
         color: '#FFF',
         fontSize: 16,
         lineHeight: 24,
-        textDecorationLine: 'underline'
-      },
+        textDecorationLine: 'underline',
+    },
+    modalLien: {
+        fontSize: 18,
+        color: '#000',
+        alignSelf: 'auto',
+        marginVertical: 10,
+        textDecorationLine: 'underline',
+    },
 });
 
 export { TitreComposant, ButtonComposant, ScreenComposant };
