@@ -13,12 +13,8 @@ import {
 
 import { TextInput } from 'react-native-paper';
 import { Link } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-const Stack = createNativeStackNavigator();
 
 const backImage = require('./assets/backgroundConnexion.png');
-
 const { width } = Dimensions.get('window');
 
 const RegistrationScreen = ({ navigation }) => {
@@ -31,8 +27,8 @@ const RegistrationScreen = ({ navigation }) => {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'android' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-            keyboardVerticalOffset={Platform.OS === 'android' ? 40 : 75} 
+            style={styles.keyboardAvoidingView}
+            keyboardVerticalOffset={Platform.OS === 'android' ? 40 : 75}
         >
             <ImageBackground source={backImage} resizeMode="cover" style={styles.image}>
                 <SafeAreaView style={styles.safeArea}>
@@ -100,6 +96,9 @@ const AppButton = ({ onPress, title }) => (
 )
 
 const styles = StyleSheet.create({
+    keyboardAvoidingView: {
+        flex: 1,
+    },
     safeArea: {
         flex: 1,
         justifyContent: 'space-between',
@@ -112,18 +111,18 @@ const styles = StyleSheet.create({
         marginBottom: 20, 
     },
     appButtonContainer: {
-        backgroundColor: "#FF3399",
+        backgroundColor: '#FF3399',
         borderRadius: 48,
         paddingVertical: 16,
         paddingHorizontal: 32,
         width: width - 47,
         height: 48,
-        alignSelf: "center",
+        alignSelf: 'center',
     },
     appButtonText: {
         fontSize: 16,
-        color: "#fff",
-        alignSelf: "center",
+        color: '#fff',
+        alignSelf: 'center',
         fontFamily: 'Chivo',
         lineHeight: 16,
     },
@@ -132,17 +131,17 @@ const styles = StyleSheet.create({
     },
     link: {
         color: '#FF3399',
-        alignSelf: "center",
+        alignSelf: 'center',
         marginTop: 20,
     },
     input: {
         width: width - 47,
         height: 48,
-        alignSelf: "center",
+        alignSelf: 'center',
         marginTop: 20,
         fontSize: 16,
         lineHeight: 24,
-        backgroundColor: "#FFFFFF"
+        backgroundColor: '#FFFFFF'
     },
     agreement: {
         width: width - 47,
@@ -151,8 +150,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Chivo',
         color: '#000000',
         marginBottom: 20,
-        alignSelf: "center",
-        textAlign: 'center'
+        alignSelf: 'center',
+        textAlign: 'center',
     }
 });
 

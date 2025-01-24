@@ -13,7 +13,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CarteScreen from './CarteScreen';
 import UserScreen from './UserScreen';
 import DetailsConcertsScreen from './DetailsConcertsScreen';
-const logo = require('./assets/logo_babord.png');
 const logoButton = require('./assets/logo_location.png');
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({onPress}) => (
@@ -88,11 +87,11 @@ const styles = StyleSheet.create({
         shadowColor: '#7F5DF0',
         textShadowOffset: {
             width: 0,
-            height: 10
+            height: 10,
         },
         shadowOpacity: 0.50,
         shadowRadius: 4,
-        elevation: 5
+        elevation: 5,
     },
     container: {
         alignItems: 'center',
@@ -110,8 +109,7 @@ const styles = StyleSheet.create({
         height: 93,
         marginTop: 15,
         //top: 15,
-        alignSelf: "center",
-    
+        alignSelf: 'center',
       },
   });
 
