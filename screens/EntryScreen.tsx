@@ -15,7 +15,7 @@ const backImage = require('./assets/backgroundEntry.png');
 const logo = require('./assets/logo_babord.png');
 const { height } = Dimensions.get('window');
 
-const EntryScreen = ({ navigation }) => (
+const EntryScreen = ({navigation}) => (
   <ImageBackground source={backImage} resizeMode="cover" style={styles.image}>
     <SafeAreaView>
       <Image source={logo} style={styles.logo}></Image>
@@ -24,7 +24,7 @@ const EntryScreen = ({ navigation }) => (
           Je connais la Beyoncé de Guéret !
         </Text>
         <AppButton
-          onPress={() => navigation.navigate('Inscription')}
+          onPress={() => navigation.navigate("Inscription")}
           title="Creer un compte"
         />
         <Text style={styles.text}>déjà bâbordien.ne ? <Link to={{ screen: 'Connexion' }} style={styles.link}>
@@ -36,7 +36,7 @@ const EntryScreen = ({ navigation }) => (
 
 );
 
-const AppButton = ({ onPress, title }) => (
+const AppButton = ( {onPress, title} ) => (
   <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
     <Text style={styles.appButtonText}>{title}</Text>
   </TouchableOpacity>

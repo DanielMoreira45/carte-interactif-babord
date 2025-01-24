@@ -15,7 +15,7 @@ import UserScreen from './UserScreen';
 import DetailsConcertsScreen from './DetailsConcertsScreen';
 const logoButton = require('./assets/logo_location.png');
 const Tab = createBottomTabNavigator();
-const CustomTabBarButton = ({onPress}) => (
+const CustomTabBarButton = (onPress : any) => (
     <TouchableOpacity style=  {{
         top: -30,
         justifyContent: 'center',
@@ -31,7 +31,7 @@ const CustomTabBarButton = ({onPress}) => (
 )
 
 
-const MainScreen = ({navigation}) => (
+const MainScreen = () => (
 <Tab.Navigator
             screenOptions={({ route }) => ({
                 tabBarShowLabel: false,
@@ -43,7 +43,7 @@ const MainScreen = ({navigation}) => (
                     position: 'absolute'
                 },
                 headerShown: false,
-                tabBarIcon: ({ focused, color, size }) => {
+                tabBarIcon: () => {
                     let iconName;
 
                     switch (route.name) {

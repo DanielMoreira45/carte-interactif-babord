@@ -17,7 +17,7 @@ import { Link } from '@react-navigation/native';
 const backImage = require('./assets/backgroundConnexion.png');
 const { width } = Dimensions.get('window');
 
-const RegistrationScreen = ({ navigation }) => {
+const RegistrationScreen = ({navigation}) => {
     const [firstName, onChangeFirstName] = React.useState('');
     const [lastName, onChangeLastName] = React.useState('');
     const [email, onChangeEmail] = React.useState('');

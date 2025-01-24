@@ -72,7 +72,7 @@ type ArtisteType = {
 //   },
 // ];
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({navigation}) => {
   const [actualites, setRectangles] = useState<ConcertType[]>([]);
   const [artistes, setArtistes] = useState<ArtisteType[]>([]);
 
