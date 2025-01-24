@@ -47,9 +47,9 @@ const ButtonComposant: React.FC<ButtonComposantProps> = ({ onPress, text, style 
 };
 
 const AppButton = ({ onPress, title }) => (
-    <TouchableOpacity onPress={onPress} style={styles.suivreButtonContainer}>
-        <Text style={styles.suivreButtonText}>{title}</Text>
-    </TouchableOpacity>
+    <TouchableOpacity onPress={onPress} style = { title === "Suivre" ? styles.suivreButtonContainer : styles.suiviButtonContainer}>
+    <Text style={title === "Suivre" ? styles.suivreButtonText : styles.suiviButtonText}>{title}</Text>
+</TouchableOpacity>
 );
 
 type GroupType = {
@@ -376,6 +376,19 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignSelf: 'center',
         paddingHorizontal: 30,
+    },
+    suiviButtonContainer: {
+        backgroundColor: '#FFF',
+        borderRadius: 20,
+        alignSelf: 'center',
+        paddingHorizontal: 30,
+    },
+    suiviButtonText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#000',
+        textAlign: 'center',
+        fontFamily: 'chivo.regular',
     },
     suivreButtonText: {
         fontSize: 24,
