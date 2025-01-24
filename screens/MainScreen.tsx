@@ -15,7 +15,7 @@ import UserScreen from './UserScreen';
 import DetailsConcertsScreen from './DetailsConcertsScreen';
 const logoButton = require('./assets/logo_location.png');
 const Tab = createBottomTabNavigator();
-const CustomTabBarButton = (onPress : any) => (
+const CustomTabBarButton = ({onPress }) => (
     <TouchableOpacity style=  {{
         top: -30,
         justifyContent: 'center',
