@@ -75,6 +75,7 @@ type ArtisteType = {
 const HomeScreen = ({navigation}) => {
   const [actualites, setRectangles] = useState<ConcertType[]>([]);
   const [artistes, setArtistes] = useState<ArtisteType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadConcerts = async () => {
@@ -104,8 +105,10 @@ const HomeScreen = ({navigation}) => {
         const data = await response.json();
         //console.log('Données des marqueurs :', data);
         setArtistes(data);
+        setIsLoading(false);
       } catch (error) {
         console.error('Erreur lors du chargement des marqueurs :', error);
+        setIsLoading(false);
       }
     };
     loadArtists();
@@ -159,7 +162,13 @@ const HomeScreen = ({navigation}) => {
       </TouchableOpacity>
     );
   };
-
+if (isLoading) {
+        return (
+          <View style={styles.contain}>
+            <Text style={styles.loadingText}>Chargement des données...</Text>
+          </View>
+        );
+      }
   return (
     <LinearGradient
       colors={['#000000', '#FF3399']}
@@ -380,6 +389,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between'
+  },
+  loadingText: {
+    fontSize: 18,
+    color: '#333',
+  },
+  contain: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
   },
 
 });

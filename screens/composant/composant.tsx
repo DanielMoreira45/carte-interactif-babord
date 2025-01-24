@@ -65,6 +65,7 @@ type GroupType = {
 
 const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
     const [groups, setRectangles] = useState<GroupType[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const loadGroupes = async () => {
@@ -78,8 +79,10 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
                 const data = await response.json();
                 // console.log('Données des marqueurs :', data);
                 setRectangles(data);
+                setIsLoading(false);
             } catch (error) {
                 console.error('Erreur lors du chargement des marqueurs :', error);
+                setIsLoading(false);
             }
         };
         loadGroupes();
@@ -280,6 +283,13 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
             )
         },
     ];
+      if (isLoading) {
+        return (
+          <View style={styles.cont}>
+            <Text style={styles.loadingText}>Chargement des données...</Text>
+          </View>
+        );
+      }
     if (group) {
         return (
             <ImageBackground source={backImage} style={styles.image}>
@@ -589,6 +599,18 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         textDecorationLine: 'underline',
     },
+    loadingText: {
+        fontSize: 18,
+        color: '#333',
+      },
+      cont: {
+        flex: 1,
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+      },
 });
 
 export { TitreComposant, ButtonComposant, ScreenComposant };
