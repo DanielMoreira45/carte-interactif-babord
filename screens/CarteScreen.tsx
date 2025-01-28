@@ -95,10 +95,14 @@ const MapComposant = () => {
   };
 
   // Fonction pour gérer le clic sur un marqueur et centrer la FlatList sur la carte correspondante
-  const onMarkerPress = (id: number, index: number, coordinate: { latitude: number, longitude: number }) => {
-    setSelectedMarkerId(id);
-    focusOnMarker(coordinate); // Recentrer la carte sur le POI sélectionné
-    flatListRef.current?.scrollToIndex({ index, animated: true });
+  const onMarkerPress = (marker: MarkerType, index: number) => {
+    setSelectedMarkerId(marker.id);
+    focusOnMarker(marker.coordinate); // Recentrer la carte sur le POI sélectionné
+    console.log('Index du marqueur sélectionné :', index);
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({ index, animated: true });
+    }
+    console.log(flatListRef);
   };
 
   const onCardPress = (marker: MarkerType) => {
@@ -127,7 +131,7 @@ const MapComposant = () => {
               title={marker.title}
               description={marker.description}
               onPress={() => {
-                onMarkerPress(marker.id, index, marker.coordinate);
+                onMarkerPress(marker, index);
               }}
             >
               <Image
@@ -140,6 +144,7 @@ const MapComposant = () => {
       </MapView>
       <CarteMapComposant
         markers={markers}
+        flatListRef={flatListRef}
         selectedMarkerId={selectedMarkerId}
         onCardPress={onCardPress}
       />

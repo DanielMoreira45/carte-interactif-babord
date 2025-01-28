@@ -1,3 +1,5 @@
+import { FlatList } from "react-native";
+
 export type MarkerType = {
     id: number;
     coordinate: { latitude: number; longitude: number };
@@ -9,6 +11,7 @@ export type MarkerType = {
 
 export type CarteMapComposantProps = {
     markers: MarkerType[];
+    flatListRef: React.RefObject<FlatList>;
     selectedMarkerId: number | null;
     onCardPress: (item: MarkerType) => void;
 };

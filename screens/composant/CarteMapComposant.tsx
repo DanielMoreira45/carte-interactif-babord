@@ -5,6 +5,7 @@ import { CarteMapComposantProps, MarkerType } from './Types';
 
 const CarteMapComposant = ({
     markers,
+    flatListRef,
     selectedMarkerId,
     onCardPress,
 }: CarteMapComposantProps) => {
@@ -32,6 +33,7 @@ const CarteMapComposant = ({
 
     return (
         <FlatList
+            ref={flatListRef}
             data={markers}
             horizontal
             keyExtractor={(item) => item.id.toString()}
