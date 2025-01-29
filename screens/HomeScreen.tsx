@@ -86,9 +86,12 @@ const HomeScreen = ({navigation}) => {
             'permission': 'web_user',
           },
         });
-        const data = await response.json();
+        let data = await response.json();
+        data = data.results;
         //console.log('Données des marqueurs :', data);
-        setRectangles(data);
+        const currentDate = new Date();
+        const filteredData = data.filter((actualite) => new Date(actualite.date_debut) >= currentDate);
+        setRectangles(filteredData);
       } catch (error) {
         console.error('Erreur lors du chargement des marqueurs :', error);
       }
@@ -102,18 +105,18 @@ const HomeScreen = ({navigation}) => {
             'permission': 'web_user',
           },
         });
-        const data = await response.json();
+        let data = await response.json();
+        data = data.results;
         //console.log('Données des marqueurs :', data);
         setArtistes(data);
         setIsLoading(false);
       } catch (error) {
-        console.error('Erreur lors du chargement des marqueurs :', error);
+        console.error('Erreur lors du chargement des artistes :', error);
         setIsLoading(false);
       }
     };
     loadArtists();
   }, []);
-
   const onConcertPress = (concert: typeof actualites[0]) => {
     try {
       navigation.navigate('DetailsConcerts', { marker_id: concert.id });
@@ -129,7 +132,6 @@ const HomeScreen = ({navigation}) => {
       console.error('Erreur lors de la navigation vers les détails :', error);
     }
   };
-
   const renderItemActualite = ({ item }: { item: typeof actualites[0] }) => {
 
     return (
@@ -139,7 +141,7 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.overlay} />
             <View style={styles.content}>
               <Text style={styles.cardTitle} numberOfLines={2} ellipsizeMode="tail" >{item.intitule}</Text>
-              <Text style={styles.card1Details}>{item.date_debut}</Text>
+              <Text style={styles.card1Details}>{item.date_debut}, {item.lieu}</Text>
               <View style={styles.cardLink}>
                 <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
               </View>
