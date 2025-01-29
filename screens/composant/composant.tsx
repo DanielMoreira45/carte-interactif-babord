@@ -61,6 +61,10 @@ type GroupType = {
     producteur: string;
     lien_producteur: string;
     departement: string;
+    lien_twitter: string;
+    lien_facebook: string;
+    lien_youtube: string;
+    lien_instagram: string;
 };
 
 const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
@@ -76,7 +80,8 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
                         'permission': 'web_user',
                     },
                 });
-                const data = await response.json();
+                let data = await response.json();
+                data = data.results;
                 // console.log('Données des marqueurs :', data);
                 setRectangles(data);
                 setIsLoading(false);
@@ -87,7 +92,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
         };
         loadGroupes();
     }, []);
-
+    //console.log('Données des groupes :', groups);
     const group = groups.find((group) => group.id === profile_id);
     //console.log('Données du group :', profile_id);
 
@@ -174,8 +179,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
                     <Text style={styles.modalTitle}>Description de {group.libelle}</Text>
 
                     <View style={styles.modalTextContainer}>
-                        <Text style={styles.modalText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                            sed do eiusmod tempor incididunt ut labore</Text>
+                        <Text style={styles.modalText}>{group.description}</Text>
                         <Text style={styles.modalSubtitle}>Nombre de personnes</Text>
                         <View style={{ flexDirection: 'row', marginVertical: 5 }}>
                             <Image
@@ -221,7 +225,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
         {
             id: 2,
             title: isArtist ? "Prochains concerts" : "Artistes et \nlieux favoris",
-            content: isArtist ? (
+            content: isArtist && group ? (
                 <View style={{ flex: 1 }}>
                     <Text style={styles.modalTitle}>Prochains concerts de NOM ARTISTE</Text>
 
@@ -255,14 +259,14 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
         {
             id: 3,
             title: isArtist ? "Liens" : "Mes événements\npassés",
-            content: isArtist ? (
+            content: isArtist && group ? (
                 <View>
-                    <Text style={styles.modalTitle}>Liens de NOM ARTISTE</Text>
+                    <Text style={styles.modalTitle}>Liens de {group.libelle}</Text>
                     <View style={styles.modalTextContainer}>
-                        <Text style={styles.modalText}>Site web:</Text>
-                        <Text style={styles.modalText}>Youtube:</Text>
-                        <Text style={styles.modalText}>Facebook:</Text>
-                        <Text style={styles.modalText}>Instagram:</Text>
+                        <Text style={styles.modalText}>Youtube: {group.lien_youtube}</Text>
+                        <Text style={styles.modalText}>Twitter: {group.lien_twitter}</Text>
+                        <Text style={styles.modalText}>Facebook:{group.lien_facebook}</Text>
+                        <Text style={styles.modalText}>Instagram:{group.lien_instagram}</Text>
 
                     </View>
                 </View>
