@@ -4,29 +4,19 @@ import {
   View,
   TextInput,
   Text,
-  Image,
   TouchableOpacity,
   FlatList,
   ImageBackground,
   Modal,
-  Dimensions,
 } from 'react-native';
 
 import ModalSelector from 'react-native-modal-selector';
-import LinearGradient from 'react-native-linear-gradient';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {NavigationContainer, Link} from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ConnectionScreen from './ConnectionScreen';
-import EntryScreen from './EntryScreen';
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+const Icon = require('react-native-vector-icons/Ionicons').default;
 const background = require('./assets/backgroundSearchScreen.png');
 const imageConcert = require('./assets/imageConcert.jpg');
 
-const SearchScreen = ({navigation}) => {
-  const [rectangles, setRectangles] = useState([]);
+const SearchScreen = () => {
+  const [rectangles, setRectangles] = useState<groupe[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [filters, setFilters] = useState({
     type: 'groupes',
@@ -37,19 +27,22 @@ const SearchScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetch('http://86.218.243.242:8000/api/groupes/', {
-      headers: {
-        'Permission': 'web_user',
-      },
-    })
-      .then(response => response.json())
-      .then(data => {
-        // Mettez à jour l'état des rectangles avec les données récupérées
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+          headers: {
+            'Permission': 'web_user',
+          },
+        });
+        let data = await response.json();
+        data = data.results;
+
         setRectangles(data);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching data:', error);
-      });
+      }
+    };
+    fetchData();
   }, []);
 
   const applyFilters = () => {
@@ -102,6 +95,13 @@ const SearchScreen = ({navigation}) => {
     { key: '94', label: 'Val-de-Marne' },
     { key: '95', label: 'Val-d\'Oise' },
   ];
+
+  type groupe = {
+    id: number;
+    libelle: string;
+    description: string;
+    departement: string;
+  };
 
   // Filtrer les groupes en fonction de la recherche
   const filteredRectangles = rectangles.filter(item =>
