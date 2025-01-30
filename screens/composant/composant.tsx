@@ -67,33 +67,33 @@ type GroupType = {
     lien_instagram: string;
 };
 
-const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
-    const [groups, setRectangles] = useState<GroupType[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+const ScreenComposant = ({ navigation, logoProfile, profile, isArtist }) => {
+    //const [groups, setRectangles] = useState<GroupType[]>([]);
+    //const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const loadGroupes = async () => {
-            try {
-                const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
-                    method: 'GET',
-                    headers: {
-                        'permission': 'web_user',
-                    },
-                });
-                let data = await response.json();
-                data = data.results;
-                // console.log('Données des marqueurs :', data);
-                setRectangles(data);
-                setIsLoading(false);
-            } catch (error) {
-                console.error('Erreur lors du chargement des marqueurs :', error);
-                setIsLoading(false);
-            }
-        };
-        loadGroupes();
-    }, []);
+    // useEffect(() => {
+    //     const loadGroupes = async () => {
+    //         try {
+    //             const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+    //                 method: 'GET',
+    //                 headers: {
+    //                     'permission': 'web_user',
+    //                 },
+    //             });
+    //             let data = await response.json();
+    //             data = data.results;
+    //             // console.log('Données des marqueurs :', data);
+    //             setRectangles(data);
+    //             setIsLoading(false);
+    //         } catch (error) {
+    //             console.error('Erreur lors du chargement des marqueurs :', error);
+    //             setIsLoading(false);
+    //         }
+    //     };
+    //     loadGroupes();
+    // }, []);
     //console.log('Données des groupes :', groups);
-    const group = groups.find((group) => group.id === profile_id);
+    //const group = groups.find((group) => group.id === profile_id);
     //console.log('Données du group :', profile_id);
 
     const Actualite = [
@@ -165,6 +165,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
 
     const [isModalVisible, setModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
+    let text = isArtist ? profile?.libelle : profile?.nom;
 
     const toggleModal = (content) => {
         setModalContent(content);
@@ -174,50 +175,50 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
         {
             id: 1,
             title: isArtist ? "Description" : "Mes infos",
-            content: isArtist && group ? (
+            content: isArtist ? (
                 <View >
-                    <Text style={styles.modalTitle}>Description de {group.libelle}</Text>
+                    <Text style={styles.modalTitle}>Description de {profile?.libelle}</Text>
 
                     <View style={styles.modalTextContainer}>
-                        <Text style={styles.modalText}>{group.description}</Text>
+                        <Text style={styles.modalText}>{profile?.description}</Text>
                         <Text style={styles.modalSubtitle}>Nombre de personnes</Text>
                         <View style={{ flexDirection: 'row', marginVertical: 5 }}>
                             <Image
                                 source={logo_homme}
                                 style={{ width: 35, height: 35, }}
                             />
-                            <Text style={styles.modalText}>{group.nb_homme} hommes</Text>
+                            <Text style={styles.modalText}>{profile?.nb_homme} hommes</Text>
                         </View>
                         <View style={{ flexDirection: 'row', marginVertical: 5 }}>
                             <Image
                                 source={logo_femme}
                                 style={{ width: 35, height: 35, }}
                             />
-                            <Text style={styles.modalText}>{group.nb_femme} femmes</Text>
+                            <Text style={styles.modalText}>{profile?.nb_femme} femmes</Text>
                         </View>
                         <Text style={styles.modalSubtitle}>Producteurice</Text>
-                        <TouchableOpacity onPress={() => Linking.openURL(group.lien_producteur)}>
-                            <Text style={styles.modalLien}>{group.producteur}</Text>
+                        <TouchableOpacity onPress={() => Linking.openURL(profile?.lien_producteur)}>
+                            <Text style={styles.modalLien}>{profile?.producteur}</Text>
                         </TouchableOpacity>
                         <Text style={styles.modalSubtitle}>Département d’origine</Text>
-                        <Text style={styles.modalText}>{group.departement}</Text>
+                        <Text style={styles.modalText}>{profile?.departement}</Text>
                     </View>
                 </View>
             ) : (
 
                 <View style={{ flex: 1 }}>
-                    <Text style={styles.modalTitle}>Description de NOM User</Text>
+                    <Text style={styles.modalTitle}>Description de {profile?.nom}</Text>
 
                     <View style={styles.modalTextContainer}>
 
                         <Text style={styles.modalSubtitle}>Nom</Text>
 
-                        <Text style={styles.modalText}>Nom</Text>
+                        <Text style={styles.modalText}>{profile?.nom}</Text>
 
                         <Text style={styles.modalSubtitle}>Prénom</Text>
-                        <Text style={styles.modalText}>Prenom</Text>
+                        <Text style={styles.modalText}>{profile?.prenom}</Text>
                         <Text style={styles.modalSubtitle}>Email</Text>
-                        <Text style={styles.modalText}>Email</Text>
+                        <Text style={styles.modalText}>{profile?.mail}</Text>
                     </View>
                 </View>
             )
@@ -225,7 +226,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
         {
             id: 2,
             title: isArtist ? "Prochains concerts" : "Artistes et \nlieux favoris",
-            content: isArtist && group ? (
+            content: isArtist ? (
                 <View style={{ flex: 1 }}>
                     <Text style={styles.modalTitle}>Prochains concerts de NOM ARTISTE</Text>
 
@@ -259,14 +260,14 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
         {
             id: 3,
             title: isArtist ? "Liens" : "Mes événements\npassés",
-            content: isArtist && group ? (
+            content: isArtist ? (
                 <View>
-                    <Text style={styles.modalTitle}>Liens de {group.libelle}</Text>
+                    <Text style={styles.modalTitle}>Liens de {profile?.libelle}</Text>
                     <View style={styles.modalTextContainer}>
-                        <Text style={styles.modalText}>Youtube: {group.lien_youtube}</Text>
-                        <Text style={styles.modalText}>Twitter: {group.lien_twitter}</Text>
-                        <Text style={styles.modalText}>Facebook:{group.lien_facebook}</Text>
-                        <Text style={styles.modalText}>Instagram:{group.lien_instagram}</Text>
+                        <Text style={styles.modalText}>Youtube: {profile?.lien_youtube}</Text>
+                        <Text style={styles.modalText}>Twitter: {profile?.lien_twitter}</Text>
+                        <Text style={styles.modalText}>Facebook:{profile?.lien_facebook}</Text>
+                        <Text style={styles.modalText}>Instagram:{profile?.lien_instagram}</Text>
 
                     </View>
                 </View>
@@ -287,20 +288,20 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
             )
         },
     ];
-      if (isLoading) {
-        return (
-          <View style={styles.cont}>
-            <Text style={styles.loadingText}>Chargement des données...</Text>
-          </View>
-        );
-      }
-    if (group) {
+    //   if (isLoading) {
+    //     return (
+    //       <View style={styles.cont}>
+    //         <Text style={styles.loadingText}>Chargement des données...</Text>
+    //       </View>
+    //     );
+    //   }
+    // if (group) {
         return (
             <ImageBackground source={backImage} style={styles.image}>
                 <ScrollView style={{ marginBottom: 65 }}>
                     <Image source={logoProfile} style={styles.logo} resizeMode="contain"></Image>
 
-                    <TitreComposant text={group.libelle} />
+                    <TitreComposant text={text} />
 
 
                     <View>
@@ -334,7 +335,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile_id, isArtist }) => {
                     />
                 )}
             </ImageBackground>);
-    }
+    //}
 };
 
 const styles = StyleSheet.create({

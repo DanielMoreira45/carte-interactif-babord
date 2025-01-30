@@ -127,7 +127,7 @@ const HomeScreen = ({navigation}) => {
 
   const onArtistePress = (item: typeof artistes[0]) => {
     try {
-      navigation.navigate('ArtisteScreen', { navigation: navigation, profile_id: item.id })
+      navigation.navigate('ArtisteScreen', { navigation: navigation, profile: item })
     } catch (error) {
       console.error('Erreur lors de la navigation vers les détails :', error);
     }
