@@ -81,28 +81,28 @@ const RegistrationScreen = ({navigation}) => {
                     {/* Основной контент */}
                     <View style={styles.contentContainer}>
                     <TextInput
-                            label="Prénom"
+                            label="Prénom *"
                             value={firstName}
                             onChangeText={onChangeFirstName}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
                         />
                         <TextInput
-                            label="Nom"
+                            label="Nom *"
                             value={lastName}
                             onChangeText={onChangeLastName}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
                         />
                         <TextInput
-                            label="Email"
+                            label="Email *"
                             value={email}
                             onChangeText={onChangeEmail}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
                         />
                         <TextInput
-                            label="Mot de passe"
+                            label="Mot de passe *"
                             value={password}
                             onChangeText={onChangePassword}
                             style={styles.input}
