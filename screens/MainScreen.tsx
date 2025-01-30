@@ -68,7 +68,7 @@ const MainScreen = ({ route }: { route: any }) => {
                 },
             })}
         >
-            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Home" component={HomeScreen} initialParams={{ user }}/>
             <Tab.Screen name="Notifications" component={HomeScreen}/>
             <Tab.Screen name="Maps" component={CarteScreen} options={{tabBarButton: (props) => (<CustomTabBarButton {...props} />)}}/>
             <Tab.Screen name="Search" component={SearchScreen}/>

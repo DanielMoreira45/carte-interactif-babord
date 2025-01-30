@@ -72,7 +72,8 @@ type ArtisteType = {
 //   },
 // ];
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation, route }) => {
+  const { user } = route.params;
   const [actualites, setRectangles] = useState<ConcertType[]>([]);
   const [artistes, setArtistes] = useState<ArtisteType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -127,7 +128,7 @@ const HomeScreen = ({navigation}) => {
 
   const onArtistePress = (item: typeof artistes[0]) => {
     try {
-      navigation.navigate('ArtisteScreen', { navigation: navigation, profile: item })
+      navigation.navigate('ArtisteScreen', { navigation: navigation, profile: item, user: user })
     } catch (error) {
       console.error('Erreur lors de la navigation vers les détails :', error);
     }

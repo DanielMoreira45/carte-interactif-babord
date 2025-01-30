@@ -67,7 +67,7 @@ type GroupType = {
     lien_instagram: string;
 };
 
-const ScreenComposant = ({ navigation, logoProfile, profile, isArtist }) => {
+const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) => {
     //const [groups, setRectangles] = useState<GroupType[]>([]);
     //const [isLoading, setIsLoading] = useState(true);
 
@@ -153,9 +153,9 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist }) => {
                         <View style={styles.content}>
                             <Text style={styles.cardTitle}>{item.title}</Text>
                             <Text style={styles.card1Details}>{item.details}</Text>
-                            <View style={styles.cardLink}>
+                            {/* <View style={styles.cardLink}>
                                 <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
-                            </View>
+                            </View> */}
                         </View>
                     </ImageBackground>
                 </View>
@@ -165,7 +165,9 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist }) => {
 
     const [isModalVisible, setModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
-    let text = isArtist ? profile?.libelle : profile?.nom;
+    //let text = isArtist ? profile?.libelle : profile?.nom;
+    let text = isArtist ? profile?.libelle : `${user?.prenom} ${user?.nom}`;
+    
 
     const toggleModal = (content) => {
         setModalContent(content);
@@ -213,12 +215,14 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist }) => {
 
                         <Text style={styles.modalSubtitle}>Nom</Text>
 
-                        <Text style={styles.modalText}>{profile?.nom}</Text>
+                        <Text style={styles.modalText}>{user?.nom}</Text>
 
                         <Text style={styles.modalSubtitle}>Prénom</Text>
-                        <Text style={styles.modalText}>{profile?.prenom}</Text>
+                        <Text style={styles.modalText}>{user?.prenom}</Text>
                         <Text style={styles.modalSubtitle}>Email</Text>
-                        <Text style={styles.modalText}>{profile?.mail}</Text>
+                        <Text style={styles.modalText}>{user?.mail}</Text>
+                        <Text style={styles.modalSubtitle}>Code Postale</Text>
+                        <Text style={styles.modalText}>{user?.code_postal}</Text>
                     </View>
                 </View>
             )
@@ -490,7 +494,7 @@ const styles = StyleSheet.create({
         //width: 290,
         width: width * 0.678,
         //height: 170,
-        height: height * 0.18,
+        height: height * 0.1,
         //margin: 5,
         marginBottom: 20,
         backgroundColor: '#000',
