@@ -9,6 +9,7 @@ import {
     Dimensions,
     KeyboardAvoidingView,
     Platform,
+    Alert,
 } from 'react-native';
 
 import { TextInput } from 'react-native-paper';
@@ -22,7 +23,52 @@ const RegistrationScreen = ({navigation}) => {
     const [lastName, onChangeLastName] = React.useState('');
     const [email, onChangeEmail] = React.useState('');
     const [password, onChangePassword] = React.useState('');
-    const [ville, onChangeVille] = React.useState('');
+    const [cp, onChangeVille] = React.useState('');
+
+    const handleRegister = async () => {
+        if (!firstName || !lastName || !email || !password) {
+            Alert.alert('Erreur', 'Tous les champs obligatoires doivent être remplis.');
+            return;
+        }
+        console.log(JSON.stringify({
+            nom: lastName,
+            prenom: firstName,
+            mail: email,
+            password: password,
+            code_postal:  cp || "",
+            suivre_groupe: [],
+        }));
+        try {
+            const response = await fetch('http://86.218.243.242:8000/api/Utilisateur/', {
+                method: 'POST',
+                headers: {
+                    'permission': 'create_mobile_user',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nom: lastName,
+                    prenom: firstName,
+                    mail: email,
+                    password: password,
+                    code_postal:  cp || "",
+                    suivre_groupe: [],
+                }),
+            });
+            console.log(response);
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Erreur:', errorData);
+                Alert.alert('Erreur', 'Une erreur est survenue lors de l\'inscription.');
+                return;
+            }
+
+            Alert.alert('Succès', 'Inscription réussie!');
+            navigation.navigate('Connexion');
+        } catch (error) {
+            console.error('Erreur lors de la requête:', error);
+            Alert.alert('Erreur', 'Impossible de terminer l\'inscription.');
+        }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -64,8 +110,8 @@ const RegistrationScreen = ({navigation}) => {
                             secureTextEntry={true}
                         />
                         <TextInput
-                            label="Ville/Code postale"
-                            value={ville}
+                            label="Code postale"
+                            value={cp}
                             onChangeText={onChangeVille}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
@@ -79,7 +125,8 @@ const RegistrationScreen = ({navigation}) => {
                             <Link to={{ screen: '' }} style={styles.link}> Privacy Policy</Link>.
                         </Text>
                         <AppButton
-                            onPress={() => navigation.navigate("")}
+                            //onPress={() => navigation.navigate("")}
+                            onPress={handleRegister}
                             title="Inscription"
                         />
                     </View>
