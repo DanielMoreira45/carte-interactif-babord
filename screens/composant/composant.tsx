@@ -10,6 +10,7 @@ import {
     ScrollView,
     FlatList,
     Linking,
+    Alert,
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -22,6 +23,7 @@ const logo_homme = require('../assets/homme.png');
 const logo_femme = require('../assets/femme.png');
 const image = require('../assets/backgroundProfile.png');
 const { height, width } = Dimensions.get('window');
+let suivreGroupeIds: number[]  = [];
 
 const TitreComposant = ({ text }: { text: string }) => {
     return (
@@ -46,10 +48,63 @@ const ButtonComposant: React.FC<ButtonComposantProps> = ({ onPress, text, style 
     );
 };
 
-const AppButton = ({ onPress, title }) => (
-    <TouchableOpacity onPress={onPress} style = { title === "Suivre" ? styles.suivreButtonContainer : styles.suiviButtonContainer}>
-    <Text style={title === "Suivre" ? styles.suivreButtonText : styles.suiviButtonText}>{title}</Text>
-</TouchableOpacity>
+const handleFollowArtist = async (profile, user) => {
+    // console.log('Utilisateur:',  JSON.stringify({
+    //     suivre_groupe: [...suivreGroupeIds, profile.id],
+    // }));
+    console.log('test', ...suivreGroupeIds);
+    console.log('test2', profile.id);
+    let newGroupesSuivis;
+    if (suivreGroupeIds.includes(profile.id)) {
+        newGroupesSuivis = suivreGroupeIds.filter((id) => id !== profile.id);
+    } else {
+        newGroupesSuivis = [...suivreGroupeIds, profile.id];
+    }
+    //const newGroupesSuivis = suivreGroupeIds.includes(profile.id) ? suivreGroupeIds.filter((id) => id !== profile.id) : [...suivreGroupeIds, profile.id];
+    //console.log('aled',newGroupesSuivis);
+    try {
+        const response = await fetch(`http://86.218.243.242:8000/api/Utilisateur/${user.id}/`, {
+            method: "PATCH",
+            headers: {
+                'permission': 'mobile_user',
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                suivre_groupe: [...newGroupesSuivis],
+            }),
+        });
+        //console.log([...suivreGroupeIds, profile.id]);
+        //console.log('Réponse:', response);
+        if (!response.ok) {
+            //throw new Error("Erreur lors de la mise à jour");
+            const errorData = await response.json();
+            console.error('Erreur:', errorData);
+            Alert.alert('Erreur', 'Une erreur est survenue lors de l\'ajout d\'une groupe.');
+            return;
+        }
+        const updatedUser = await response.json();
+        console.log('Réponse:', updatedUser);
+        suivreGroupeIds = updatedUser.suivre_groupe;
+
+        Alert.alert("Artiste ajouté aux abonnements !");
+    } catch (error) {
+        console.error("Erreur lors de la requête:", error);
+        Alert.alert("Impossible d'ajouter l'artiste !");
+    }
+};
+const AppButton = ({ onPress, title, profile, user }) => (
+//     <TouchableOpacity onPress={onPress} style = { title === "Suivre" ? styles.suivreButtonContainer : styles.suiviButtonContainer}>
+//     <Text style={title === "Suivre" ? styles.suivreButtonText : styles.suiviButtonText}>{title}</Text>
+// </TouchableOpacity>
+<TouchableOpacity 
+        onPress={1 === 1 ? () => handleFollowArtist(profile, user) : onPress} 
+        style={title === "Suivre" ? styles.suivreButtonContainer : styles.suiviButtonContainer}
+    >
+        <Text style={title === "Suivre" ? styles.suivreButtonText : styles.suiviButtonText}>
+            {title}
+        </Text>
+    </TouchableOpacity>
+
 );
 
 type GroupType = {
@@ -67,7 +122,17 @@ type GroupType = {
     lien_instagram: string;
 };
 
-const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) => {
+type UserType = {
+    id: number;
+    nom: string;
+    prenom: string;
+    mail: string;
+    password: string;
+    code_postal:  number
+    suivre_groupe: number[];
+};
+
+const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp }) => {
     //const [groups, setRectangles] = useState<GroupType[]>([]);
     //const [isLoading, setIsLoading] = useState(true);
 
@@ -95,33 +160,37 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) =
     //console.log('Données des groupes :', groups);
     //const group = groups.find((group) => group.id === profile_id);
     //console.log('Données du group :', profile_id);
+    
+      const [suivreGroupe, setSuivreGroupe] = useState<GroupType[]>([]);
+      const [users, setUsers] = useState<UserType[]>([]);
 
-    const Actualite = [
-        {
-            id: 1,
-            title: 'Nom de l’actualité',
-            details: 'détail de l’actualité',
-            image: image,
-        },
-        {
-            id: 2,
-            title: 'Nom de l’actualité',
-            details: 'détail de l’actualité',
-            image: image,
-        },
-        {
-            id: 3,
-            title: 'Nom de l’actualité',
-            details: 'détail de l’actualité',
-            image: image,
-        },
-        {
-            id: 4,
-            title: 'Nom de l’actualité',
-            details: 'détail de l’actualité',
-            image: image,
-        },
-    ];
+    // const Actualite = [
+    //     {
+    //         id: 1,
+    //         title: 'Nom de l’actualité',
+    //         details: 'détail de l’actualité',
+    //         image: image,
+    //     },
+    //     {
+    //         id: 2,
+    //         title: 'Nom de l’actualité',
+    //         details: 'détail de l’actualité',
+    //         image: image,
+    //     },
+    //     {
+    //         id: 3,
+    //         title: 'Nom de l’actualité',
+    //         details: 'détail de l’actualité',
+    //         image: image,
+    //     },
+    //     {
+    //         id: 4,
+    //         title: 'Nom de l’actualité',
+    //         details: 'détail de l’actualité',
+    //         image: image,
+    //     },
+    // ];
+
     const ModalComposant = ({ content }) => {
         return (
             <View style={styles.modalOverlay}>
@@ -143,16 +212,16 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) =
 
         );
     };
-    const renderItemActualite = ({ item }: { item: typeof Actualite[0] }) => {
+    const renderItemActualite = ({ item }: { item: GroupType }) => {
 
         return (
             <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                 <View style={[styles.card1]}>
-                    <ImageBackground source={item.image} style={styles.cardimages1}>
+                    <ImageBackground source={image} style={styles.cardimages1}>
                         <View style={styles.overlay} />
                         <View style={styles.content}>
-                            <Text style={styles.cardTitle}>{item.title}</Text>
-                            <Text style={styles.card1Details}>{item.details}</Text>
+                            <Text style={styles.cardTitle}>{item.libelle}</Text>
+                            <Text style={styles.card1Details}>{item.description}</Text>
                             {/* <View style={styles.cardLink}>
                                 <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
                             </View> */}
@@ -162,12 +231,51 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) =
             </TouchableOpacity>
         );
     };
-
+    useEffect(() => {
+          const loadUser = async () => {
+            try {
+              const response = await fetch('http://86.218.243.242:8000/api/Utilisateur/', {
+                method: 'GET',
+                headers: {
+                  'permission': 'mobile_user',
+                },
+              });
+              let data = await response.json();
+              data = data.results;
+              setUsers(data);
+            } catch (error) {
+              console.error('Erreur lors du chargement dun user :', error);
+            }
+          };
+          loadUser();
+  }, []);
+    const user = users.find((us) => us.id === userTemp.id);
+    suivreGroupeIds = user?.suivre_groupe ?? [];
+    useEffect(() => {
+        const loadArtists = async () => {
+            try {
+              const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+                method: 'GET',
+                headers: {
+                  'permission': 'web_user',
+                },
+              });
+              let data = await response.json();
+              data = data.results;
+              const filteredData = data.filter((groupe) => suivreGroupeIds.includes(groupe.id));
+              //console.log('Groupes suivi :', suivreGroupeIds);
+              console.log('Groupes filtrés :', filteredData);
+              setSuivreGroupe(filteredData);
+            } catch (error) {
+              console.error('Erreur lors du chargement des artistes :', error);
+            }
+          };
+          loadArtists();
+    }, []);
     const [isModalVisible, setModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
     //let text = isArtist ? profile?.libelle : profile?.nom;
     let text = isArtist ? profile?.libelle : `${user?.prenom} ${user?.nom}`;
-    
 
     const toggleModal = (content) => {
         setModalContent(content);
@@ -209,14 +317,11 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) =
             ) : (
 
                 <View style={{ flex: 1 }}>
-                    <Text style={styles.modalTitle}>Description de {profile?.nom}</Text>
+                    <Text style={styles.modalTitle}>Mes infos</Text>
 
                     <View style={styles.modalTextContainer}>
-
                         <Text style={styles.modalSubtitle}>Nom</Text>
-
                         <Text style={styles.modalText}>{user?.nom}</Text>
-
                         <Text style={styles.modalSubtitle}>Prénom</Text>
                         <Text style={styles.modalText}>{user?.prenom}</Text>
                         <Text style={styles.modalSubtitle}>Email</Text>
@@ -236,7 +341,8 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) =
 
                     <View style={styles.container1}>
                         <FlatList
-                            data={Actualite}
+                            //data={Actualite}
+                            data={suivreGroupe}
                             renderItem={renderItemActualite}
                             keyExtractor={item => item.id.toString()}
                             showsHorizontalScrollIndicator={false}
@@ -251,7 +357,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) =
 
                     <View style={styles.container1}>
                         <FlatList
-                            data={Actualite}
+                            data={suivreGroupe}
                             renderItem={renderItemActualite}
                             keyExtractor={item => item.id.toString()}
                             showsHorizontalScrollIndicator={false}
@@ -280,18 +386,19 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) =
                     <Text style={styles.modalTitle}>Evenements Suivies</Text>
 
                     <View style={styles.container1}>
-                        <FlatList
+                        {/* <FlatList
                             data={Actualite}
                             renderItem={renderItemActualite}
                             keyExtractor={item => item.id.toString()}
                             showsHorizontalScrollIndicator={false}
                             style={styles.cardList}
-                        />
+                        /> */}
                     </View>
                 </View>
             )
         },
     ];
+
     //   if (isLoading) {
     //     return (
     //       <View style={styles.cont}>
@@ -300,6 +407,8 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) =
     //     );
     //   }
     // if (group) {
+
+    suivreGroupeIds = user?.suivre_groupe || [];
         return (
             <ImageBackground source={backImage} style={styles.image}>
                 <ScrollView style={{ marginBottom: 65 }}>
@@ -312,7 +421,9 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, user }) =
                         {isArtist ? (
                             <AppButton
                                 onPress={() => navigation.navigate("Main")}
-                                title="Suivre"
+                                title={user?.suivre_groupe?.includes(profile.id) ? "Suivi" : "Suivre"}
+                                profile={profile}
+                                user={user}
                             />
                         ) : null}
                     </View>
