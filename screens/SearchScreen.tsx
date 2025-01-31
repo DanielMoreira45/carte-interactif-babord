@@ -9,6 +9,7 @@ import {
   ImageBackground,
   Modal,
 } from 'react-native';
+import { listeDepartements } from './constants/listeDepartements';
 
 import ModalSelector from 'react-native-modal-selector';
 const Icon = require('react-native-vector-icons/Ionicons').default;
@@ -67,34 +68,6 @@ const SearchScreen = () => {
   ];
 
   const numberOptions = [...Array(11).keys()].map(num => ({ key: num.toString(), label: num.toString() }));
-
-  const departmentOptions = [
-    { key: '01', label: 'Ain' },
-    { key: '02', label: 'Aisne' },
-    { key: '03', label: 'Allier' },
-    // Ajoutez tous les départements ici
-    { key: '75', label: 'Paris' },
-    { key: '76', label: 'Seine-Maritime' },
-    { key: '77', label: 'Seine-et-Marne' },
-    { key: '78', label: 'Yvelines' },
-    { key: '79', label: 'Deux-Sèvres' },
-    { key: '80', label: 'Somme' },
-    { key: '81', label: 'Tarn' },
-    { key: '82', label: 'Tarn-et-Garonne' },
-    { key: '83', label: 'Var' },
-    { key: '84', label: 'Vaucluse' },
-    { key: '85', label: 'Vendée' },
-    { key: '86', label: 'Vienne' },
-    { key: '87', label: 'Haute-Vienne' },
-    { key: '88', label: 'Vosges' },
-    { key: '89', label: 'Yonne' },
-    { key: '90', label: 'Territoire de Belfort' },
-    { key: '91', label: 'Essonne' },
-    { key: '92', label: 'Hauts-de-Seine' },
-    { key: '93', label: 'Seine-Saint-Denis' },
-    { key: '94', label: 'Val-de-Marne' },
-    { key: '95', label: 'Val-d\'Oise' },
-  ];
 
   type groupe = {
     id: number;
@@ -198,15 +171,15 @@ const SearchScreen = () => {
             </ModalSelector>
             <Text style={styles.filterLabel}>Département</Text>
             <ModalSelector
-              data={departmentOptions}
+              data={listeDepartements}
               initValue="Sélectionner un département"
-              onChange={(option) => setFilters({ ...filters, departement: option.key })}
+              onChange={(option) => setFilters({ ...filters, departement: option.key.toString() })}
             >
               <TextInput
                 style={styles.filterInput}
                 editable={false}
                 placeholder="Sélectionner un département"
-                value={departmentOptions.find(option => option.key === filters.departement)?.label}
+                value={listeDepartements.find((option: { key: string; }) => option.key === filters.departement)?.label}
               />
             </ModalSelector>
             <View style={styles.modalButtons}>
