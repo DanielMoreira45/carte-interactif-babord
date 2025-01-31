@@ -1,11 +1,11 @@
 <h1 align="center">
   <br>
   <img src="https://www.label-babord.fr/wp-content/uploads/2022/11/cropped-logo-label-babord-circuit-court-musical-producteurs-musique-nouvelle-aquitaine.png" alt="Logo Babord" width=100></a><br>
-    Site web BABORD
+    Application Mobile BABORD
   <br>
 </h1>
 
-<h4 align="center">Projet création site web pour le label Babord</h4>
+<h4 align="center">Projet création Application Mobile pour le label Babord</h4>
 
 <p align="center">
   <a href="#présentation-du-projet">Présentation Du Projet</a>
