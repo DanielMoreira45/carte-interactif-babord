@@ -11,13 +11,14 @@ import {
 } from 'react-native';
 
 import ModalSelector from 'react-native-modal-selector';
+import SearchBarComposant from './composant/SearchBarComposant';
 const Icon = require('react-native-vector-icons/Ionicons').default;
 const background = require('./assets/backgroundSearchScreen.png');
 const imageConcert = require('./assets/imageConcert.jpg');
 
 const SearchScreen = () => {
   const [rectangles, setRectangles] = useState<groupe[]>([]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false); // Afficher ou masquer la modal (pop-up) de filtres
   const [filters, setFilters] = useState({
     type: 'groupes',
     nb_homme: '0',
@@ -25,6 +26,8 @@ const SearchScreen = () => {
     departement: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
+  // searchQuery : chaîne de caractères qui représente la requête de recherche actuelle saisie par l'utilisateur dans la barre de recherche.
+  // setSearchQuery : fonction qui met à jour la valeur de searchQuery.
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,21 +116,19 @@ const SearchScreen = () => {
       <FlatList
         data={filteredRectangles}
         ListHeaderComponent={
-          <View style={styles.searchContainer}>
-            <View style={styles.searchInputContainer}>
-              <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Rechercher..."
-                placeholderTextColor="#888"
-                value={searchQuery}
-                onChangeText={text => setSearchQuery(text)}
-              />
-            </View>
-            <TouchableOpacity style={styles.filterButton} onPress={() => setModalVisible(true)} testID="filter-button">
-              <Icon name="filter" size={24} color="#888" />
-            </TouchableOpacity>
-          </View>
+          <SearchBarComposant
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            setModalVisible={setModalVisible}
+            searchIconSize={25}
+            filterIconSize={25}
+            iconColor="#000"
+            placeholderTextColor="#aaa"
+            searchBarHeight={40}
+            searchBarWidth="90%"
+            filterButtonHeight={40}
+            filterButtonWidth={40}
+          />
         }
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.rectangle} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
