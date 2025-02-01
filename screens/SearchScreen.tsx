@@ -29,22 +29,53 @@ const SearchScreen = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (searchQuery.trim() === '') {
+        setRectangles([]);
+        return;
+      }
+    
       try {
-        const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
-          headers: {
-            'Permission': 'web_user',
-          },
-        });
-        let data = await response.json();
-        data = data.results;
-
-        setRectangles(data);
+        const [libelleResponse, departementResponse, producteurResponse] = await Promise.all([
+          fetch(`http://86.218.243.242:8000/api/groupes?libelle=${searchQuery}`, {
+            headers: {
+              'Permission': 'web_user',
+            },
+          }),
+          fetch(`http://86.218.243.242:8000/api/groupes?departement=${searchQuery}`, {
+            headers: {
+              'Permission': 'web_user',
+            },
+          }),
+          fetch(`http://86.218.243.242:8000/api/groupes?producteur=${searchQuery}`, {
+            headers: {
+              'Permission': 'web_user',
+            },
+          }),
+        ]);
+    
+        const libelleData = await libelleResponse.json();
+        const departementData = await departementResponse.json();
+        const producteurData = await producteurResponse.json();
+    
+        const combinedData = [
+          ...libelleData.results,
+          ...departementData.results,
+          ...producteurData.results,
+        ];
+    
+        // Remove duplicates
+        const uniqueData = Array.from(new Set(combinedData.map(a => a.id)))
+          .map(id => {
+            return combinedData.find(a => a.id === id);
+          });
+    
+        setRectangles(uniqueData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
-  }, []);
+  }, [searchQuery]);
 
   const applyFilters = () => {
     // Ajoutez votre logique de filtrage ici
@@ -73,18 +104,21 @@ const SearchScreen = () => {
     id: number;
     libelle: string;
     description: string;
+    nb_homme: number;
+    nb_femme: number;
+    producteur: string;
+    lien_producteur: string;
+    lien_twitter: string;
+    lien_facebook: string;
+    lien_youtube: string;
+    lien_instagram: string;
     departement: string;
   };
-
-  // Filtrer les groupes en fonction de la recherche
-  const filteredRectangles = rectangles.filter(item =>
-    item.libelle.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <ImageBackground source={background} style={[StyleSheet.absoluteFill]}>
       <FlatList
-        data={filteredRectangles}
+        data={rectangles}
         ListHeaderComponent={
           <View style={styles.searchContainer}>
             <View style={styles.searchInputContainer}>
@@ -118,6 +152,11 @@ const SearchScreen = () => {
         )}
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Veuillez faire une recherche</Text>
+          </View>
+        }
       />
       <Modal
         animationType="slide"
@@ -201,6 +240,17 @@ const SearchScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  emptyText: {
+    fontSize: 24,
+    color: '#000',
+    textAlign: 'center',
+  },
   linearGradient: {
     flex: 1,
   },
