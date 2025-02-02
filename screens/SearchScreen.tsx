@@ -17,7 +17,7 @@ const background = require('./assets/backgroundSearchScreen.png');
 const imageConcert = require('./assets/imageConcert.jpg');
 
 const SearchScreen = () => {
-  const [rectangles, setRectangles] = useState<groupe[]>([]);
+  const [rectangles, setRectangles] = useState<(groupe | album | concert | festival | info)[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [filters, setFilters] = useState({
     type: 'groupes',
@@ -35,35 +35,49 @@ const SearchScreen = () => {
       }
     
       try {
-        const [libelleResponse, departementResponse, producteurResponse] = await Promise.all([
-          fetch(`http://86.218.243.242:8000/api/groupes?libelle=${searchQuery}`, {
+        const [groupesResponse, albumsResponse, concertsResponse, festivalsResponse, infosResponse] = await Promise.all([
+          fetch(`http://86.218.243.242:8000/api/groupes?q=${searchQuery}`, {
             headers: {
               'Permission': 'web_user',
             },
           }),
-          fetch(`http://86.218.243.242:8000/api/groupes?departement=${searchQuery}`, {
+          fetch(`http://86.218.243.242:8000/api/albums?q=${searchQuery}`, {
             headers: {
               'Permission': 'web_user',
             },
           }),
-          fetch(`http://86.218.243.242:8000/api/groupes?producteur=${searchQuery}`, {
+          fetch(`http://86.218.243.242:8000/api/concerts?q=${searchQuery}`, {
+            headers: {
+              'Permission': 'web_user',
+            },
+          }),
+          fetch(`http://86.218.243.242:8000/api/festivals?q=${searchQuery}`, {
+            headers: {
+              'Permission': 'web_user',
+            },
+          }),
+          fetch(`http://86.218.243.242:8000/api/infos?q=${searchQuery}`, {
             headers: {
               'Permission': 'web_user',
             },
           }),
         ]);
     
-        const libelleData = await libelleResponse.json();
-        const departementData = await departementResponse.json();
-        const producteurData = await producteurResponse.json();
+        const groupesData = await groupesResponse.json();
+        const albumsData = await albumsResponse.json();
+        const concertsData = await concertsResponse.json();
+        const festivalsData = await festivalsResponse.json();
+        const infosData = await infosResponse.json();
     
         const combinedData = [
-          ...libelleData.results,
-          ...departementData.results,
-          ...producteurData.results,
+          ...groupesData.results.map((item: groupe) => ({ ...item, type: 'groupe' })),
+          ...albumsData.results.map((item: album) => ({ ...item, type: 'album' })),
+          ...concertsData.results.map((item: concert) => ({ ...item, type: 'concert' })),
+          ...festivalsData.results.map((item: festival) => ({ ...item, type: 'festival' })),
+          ...infosData.results.map((item: info) => ({ ...item, type: 'info' })),
         ];
     
-        // Remove duplicates
+        // Suppression des doublons
         const uniqueData = Array.from(new Set(combinedData.map(a => a.id)))
           .map(id => {
             return combinedData.find(a => a.id === id);
@@ -113,6 +127,125 @@ const SearchScreen = () => {
     lien_youtube: string;
     lien_instagram: string;
     departement: string;
+    type: 'groupe';
+  };
+
+  type info = {
+    id: number;
+    titre: string;
+    nom_image: string;
+    type_info: string;
+    type: 'info';
+  };
+
+  type concert = {
+    id: number;
+    intitule: string;
+    date_debut: string;
+    lieu: string;
+    groupe: number;
+    type: 'concert';
+  };
+
+  type album = {
+    id: number;
+    libelle: string;
+    description: string;
+    date_sortie: string;
+    lieu: string;
+    groupe: number;
+    type: 'album';
+  };
+
+  type festival = {
+    id: number;
+    date_debut: string;
+    lieu: string;
+    description: string;
+    concerts: number[];
+    type: 'festival';
+  };
+
+  const renderItem = ({ item }: { item: groupe | album | concert | festival | info }) => {
+    switch (item.type) {
+      case 'groupe':
+        return (
+          <TouchableOpacity style={styles.rectangle} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+            <ImageBackground source={imageConcert} style={styles.imageBackground} imageStyle={styles.imageStyle}>
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{item.libelle}</Text>
+                <Text style={styles.subtitle}>{item.description}</Text>
+                <Text style={styles.type}>Département : {item.departement}</Text>
+                <TouchableOpacity style={styles.moreButton} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+                  <Text style={styles.moreButtonText}>Voir plus</Text>
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+        );
+      case 'album':
+        return (
+          <TouchableOpacity style={styles.rectangle} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+            <ImageBackground source={imageConcert} style={styles.imageBackground} imageStyle={styles.imageStyle}>
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{item.libelle}</Text>
+                <Text style={styles.subtitle}>{item.description}</Text>
+                <Text style={styles.type}>Lieu : {item.lieu}</Text>
+                <TouchableOpacity style={styles.moreButton} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+                  <Text style={styles.moreButtonText}>Voir plus</Text>
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+        );
+      case 'concert':
+        return (
+          <TouchableOpacity style={styles.rectangle} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+            <ImageBackground source={imageConcert} style={styles.imageBackground} imageStyle={styles.imageStyle}>
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{item.intitule}</Text>
+                <Text style={styles.subtitle}>Date : {item.date_debut}</Text>
+                <Text style={styles.type}>Lieu : {item.lieu}</Text>
+                <Text style={styles.type}>Groupe : {item.groupe}</Text>
+                <TouchableOpacity style={styles.moreButton} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+                  <Text style={styles.moreButtonText}>Voir plus</Text>
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+        );
+      case 'festival':
+        return (
+          <TouchableOpacity style={styles.rectangle} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+            <ImageBackground source={imageConcert} style={styles.imageBackground} imageStyle={styles.imageStyle}>
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{item.description.substring(0, 50)}...</Text>
+                <Text style={styles.subtitle}>Date : {item.date_debut}</Text>
+                <Text style={styles.type}>Lieu : {item.lieu}</Text>
+                <TouchableOpacity style={styles.moreButton} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+                  <Text style={styles.moreButtonText}>Voir plus</Text>
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+        );
+      case 'info':
+        return (
+          <TouchableOpacity style={styles.rectangle} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+            <ImageBackground source={imageConcert} style={styles.imageBackground} imageStyle={styles.imageStyle}>
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{item.titre}</Text>
+                <Text style={styles.subtitle}>Type : {item.type_info}</Text>
+                <TouchableOpacity style={styles.moreButton} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
+                  <Text style={styles.moreButtonText}>Voir plus</Text>
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -136,20 +269,7 @@ const SearchScreen = () => {
             </TouchableOpacity>
           </View>
         }
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.rectangle} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
-            <ImageBackground source={imageConcert} style={styles.imageBackground} imageStyle={styles.imageStyle}>
-              <View style={styles.textContainer}>
-                <Text style={styles.title}>{item.libelle}</Text>
-                <Text style={styles.subtitle}>{item.description}</Text>
-                <Text style={styles.type}>Département : {item.departement}</Text>
-                <TouchableOpacity style={styles.moreButton} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
-                  <Text style={styles.moreButtonText}>Voir plus</Text>
-                </TouchableOpacity>
-              </View>
-            </ImageBackground>
-          </TouchableOpacity>
-        )}
+        renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={
