@@ -20,10 +20,21 @@ const SearchScreen = () => {
   const [rectangles, setRectangles] = useState<(groupe | album | concert | festival | info)[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [filters, setFilters] = useState({
-    type: 'groupes',
+    type: 'tous',
+    libelle: '',
+    departement: '',
     nb_homme: '0',
     nb_femme: '0',
-    departement: '',
+    producteur: '',
+    intitule: '',
+    date_debut: '',
+    lieu: '',
+    groupe: '',
+    description: '',
+    date_sortie: '',
+    concerts: '',
+    titre: '',
+    type_info: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -35,81 +46,141 @@ const SearchScreen = () => {
       }
     
       try {
-        const [groupesResponse, albumsResponse, concertsResponse, festivalsResponse, infosResponse] = await Promise.all([
-          fetch(`http://86.218.243.242:8000/api/groupes?q=${searchQuery}`, {
-            headers: {
-              'Permission': 'web_user',
-            },
-          }),
-          fetch(`http://86.218.243.242:8000/api/albums?q=${searchQuery}`, {
-            headers: {
-              'Permission': 'web_user',
-            },
-          }),
-          fetch(`http://86.218.243.242:8000/api/concerts?q=${searchQuery}`, {
-            headers: {
-              'Permission': 'web_user',
-            },
-          }),
-          fetch(`http://86.218.243.242:8000/api/festivals?q=${searchQuery}`, {
-            headers: {
-              'Permission': 'web_user',
-            },
-          }),
-          fetch(`http://86.218.243.242:8000/api/infos?q=${searchQuery}`, {
-            headers: {
-              'Permission': 'web_user',
-            },
-          }),
-        ]);
-    
-        const groupesData = await groupesResponse.json();
-        const albumsData = await albumsResponse.json();
-        const concertsData = await concertsResponse.json();
-        const festivalsData = await festivalsResponse.json();
-        const infosData = await infosResponse.json();
-    
-        const combinedData = [
-          ...groupesData.results.map((item: groupe) => ({ ...item, type: 'groupe' })),
-          ...albumsData.results.map((item: album) => ({ ...item, type: 'album' })),
-          ...concertsData.results.map((item: concert) => ({ ...item, type: 'concert' })),
-          ...festivalsData.results.map((item: festival) => ({ ...item, type: 'festival' })),
-          ...infosData.results.map((item: info) => ({ ...item, type: 'info' })),
-        ];
-    
+        let combinedData = [];
+        if (filters.type === 'tous') {
+          const [groupesResponse, albumsResponse, concertsResponse, festivalsResponse, infosResponse] = await Promise.all([
+            fetch(`http://86.218.243.242:8000/api/groupes?q=${searchQuery}`, {
+              headers: {
+                'Permission': 'web_user',
+              },
+            }),
+            fetch(`http://86.218.243.242:8000/api/albums?q=${searchQuery}`, {
+              headers: {
+                'Permission': 'web_user',
+              },
+            }),
+            fetch(`http://86.218.243.242:8000/api/concerts?q=${searchQuery}`, {
+              headers: {
+                'Permission': 'web_user',
+              },
+            }),
+            fetch(`http://86.218.243.242:8000/api/festivals?q=${searchQuery}`, {
+              headers: {
+                'Permission': 'web_user',
+              },
+            }),
+            fetch(`http://86.218.243.242:8000/api/infos?q=${searchQuery}`, {
+              headers: {
+                'Permission': 'web_user',
+              },
+            }),
+          ]);
+
+          const groupesData = await groupesResponse.json();
+          const albumsData = await albumsResponse.json();
+          const concertsData = await concertsResponse.json();
+          const festivalsData = await festivalsResponse.json();
+          const infosData = await infosResponse.json();
+
+          combinedData = [
+            ...groupesData.results.map((item: groupe) => ({ ...item, type: 'groupe' })),
+            ...albumsData.results.map((item: album) => ({ ...item, type: 'album' })),
+            ...concertsData.results.map((item: concert) => ({ ...item, type: 'concert' })),
+            ...festivalsData.results.map((item: festival) => ({ ...item, type: 'festival' })),
+            ...infosData.results.map((item: info) => ({ ...item, type: 'info' })),
+          ];
+        } else {
+          let response;
+          switch (filters.type) {
+            case 'groupes':
+              response = await fetch(`http://86.218.243.242:8000/api/groupes?q=${searchQuery}`, {
+                headers: {
+                  'Permission': 'web_user',
+                },
+              });
+              break;
+            case 'albums':
+              response = await fetch(`http://86.218.243.242:8000/api/albums?q=${searchQuery}`, {
+                headers: {
+                  'Permission': 'web_user',
+                },
+              });
+              break;
+            case 'concerts':
+              response = await fetch(`http://86.218.243.242:8000/api/concerts?q=${searchQuery}`, {
+                headers: {
+                  'Permission': 'web_user',
+                },
+              });
+              break;
+            case 'festivals':
+              response = await fetch(`http://86.218.243.242:8000/api/festivals?q=${searchQuery}`, {
+                headers: {
+                  'Permission': 'web_user',
+                },
+              });
+              break;
+            case 'infos':
+              response = await fetch(`http://86.218.243.242:8000/api/infos?q=${searchQuery}`, {
+                headers: {
+                  'Permission': 'web_user',
+                },
+              });
+              break;
+            default:
+              return;
+          }
+
+          const data = await response.json();
+          combinedData = data.results.map((item: groupe | album | concert | festival | info) => ({ ...item, type: filters.type }));
+        }
+
         // Suppression des doublons
-        const uniqueData = Array.from(new Set(combinedData.map(a => a.id)))
+        const uniqueData = Array.from(new Set(combinedData.map((a: { id: any; }) => a.id)))
           .map(id => {
-            return combinedData.find(a => a.id === id);
+            return combinedData.find((a: { id: unknown; }) => a.id === id);
           });
-    
+
         setRectangles(uniqueData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
-  }, [searchQuery]);
+  }, [searchQuery, filters.type]);
 
   const applyFilters = () => {
-    // Ajoutez votre logique de filtrage ici
+    setSearchQuery(filters.type);
     setModalVisible(false);
   };
 
   const resetFilters = () => {
     setFilters({
-      type: 'groupes',
+      type: 'tous',
+      libelle: '',
+      departement: '',
       nb_homme: '0',
       nb_femme: '0',
-      departement: '',
+      producteur: '',
+      intitule: '',
+      date_debut: '',
+      lieu: '',
+      groupe: '',
+      description: '',
+      date_sortie: '',
+      concerts: '',
+      titre: '',
+      type_info: '',
     });
+    setSearchQuery('');
   };
 
   const typeOptions = [
     { key: 'groupes', label: 'Groupes' },
-    { key: 'actualites', label: 'Actualités' },
     { key: 'concerts', label: 'Concerts' },
+    { key: 'albums', label: 'Albums' },
     { key: 'festivals', label: 'Festivals' },
+    { key: 'infos', label: 'Infos' },
   ];
 
   const numberOptions = [...Array(11).keys()].map(num => ({ key: num.toString(), label: num.toString() }));
@@ -282,14 +353,11 @@ const SearchScreen = () => {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
+        onRequestClose={() => setModalVisible(!modalVisible)}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Options de filtrage</Text>
-            <Text style={styles.filterLabel}>Type</Text>
+            <Text style={styles.modalTitle}>Filtres</Text>
             <ModalSelector
               data={typeOptions}
               initValue="Sélectionner un type"
@@ -302,45 +370,170 @@ const SearchScreen = () => {
                 value={typeOptions.find(option => option.key === filters.type)?.label}
               />
             </ModalSelector>
-            <Text style={styles.filterLabel}>Nombre d'hommes</Text>
-            <ModalSelector
-              data={numberOptions}
-              initValue="0"
-              onChange={(option) => setFilters({ ...filters, nb_homme: option.key })}
-            >
-              <TextInput
-                style={styles.filterInput}
-                editable={false}
-                placeholder="0"
-                value={filters.nb_homme}
-              />
-            </ModalSelector>
-            <Text style={styles.filterLabel}>Nombre de femmes</Text>
-            <ModalSelector
-              data={numberOptions}
-              initValue="0"
-              onChange={(option) => setFilters({ ...filters, nb_femme: option.key })}
-            >
-              <TextInput
-                style={styles.filterInput}
-                editable={false}
-                placeholder="0"
-                value={filters.nb_femme}
-              />
-            </ModalSelector>
-            <Text style={styles.filterLabel}>Département</Text>
-            <ModalSelector
-              data={listeDepartements}
-              initValue="Sélectionner un département"
-              onChange={(option) => setFilters({ ...filters, departement: option.key.toString() })}
-            >
-              <TextInput
-                style={styles.filterInput}
-                editable={false}
-                placeholder="Sélectionner un département"
-                value={listeDepartements.find((option: { key: string; }) => option.key === filters.departement)?.label}
-              />
-            </ModalSelector>
+            {filters.type === 'groupes' && (
+              <>
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Libellé"
+                  value={filters.libelle}
+                  onChangeText={text => setFilters({ ...filters, libelle: text })}
+                />
+                <ModalSelector
+                  data={listeDepartements}
+                  initValue="Sélectionner un département"
+                  onChange={(option) => setFilters({ ...filters, departement: option.key })}
+                >
+                  <TextInput
+                    style={styles.filterInput}
+                    editable={false}
+                    placeholder="Sélectionner un département"
+                    value={listeDepartements.find(option => option.key === filters.departement)?.label}
+                  />
+                </ModalSelector>
+                <ModalSelector
+                  data={numberOptions}
+                  initValue="0"
+                  onChange={(option) => setFilters({ ...filters, nb_homme: option.key })}
+                >
+                  <TextInput
+                    style={styles.filterInput}
+                    editable={false}
+                    placeholder="Nombre d'hommes"
+                    value={filters.nb_homme}
+                  />
+                </ModalSelector>
+                <ModalSelector
+                  data={numberOptions}
+                  initValue="0"
+                  onChange={(option) => setFilters({ ...filters, nb_femme: option.key })}
+                >
+                  <TextInput
+                    style={styles.filterInput}
+                    editable={false}
+                    placeholder="Nombre de femmes"
+                    value={filters.nb_femme}
+                  />
+                </ModalSelector>
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Producteur"
+                  value={filters.producteur}
+                  onChangeText={text => setFilters({ ...filters, producteur: text })}
+                />
+              </>
+            )}
+            {filters.type === 'concerts' && (
+              <>
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Intitulé"
+                  value={filters.intitule}
+                  onChangeText={text => setFilters({ ...filters, intitule: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Date de début"
+                  value={filters.date_debut}
+                  onChangeText={text => setFilters({ ...filters, date_debut: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Lieu"
+                  value={filters.lieu}
+                  onChangeText={text => setFilters({ ...filters, lieu: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Groupe"
+                  value={filters.groupe}
+                  onChangeText={text => setFilters({ ...filters, groupe: text })}
+                />
+              </>
+            )}
+            {filters.type === 'albums' && (
+              <>
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Libellé"
+                  value={filters.libelle}
+                  onChangeText={text => setFilters({ ...filters, libelle: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Description"
+                  value={filters.description}
+                  onChangeText={text => setFilters({ ...filters, description: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Date de sortie"
+                  value={filters.date_sortie}
+                  onChangeText={text => setFilters({ ...filters, date_sortie: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Lieu"
+                  value={filters.lieu}
+                  onChangeText={text => setFilters({ ...filters, lieu: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Groupe"
+                  value={filters.groupe}
+                  onChangeText={text => setFilters({ ...filters, groupe: text })}
+                />
+              </>
+            )}
+            {filters.type === 'festivals' && (
+              <>
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Date de début"
+                  value={filters.date_debut}
+                  onChangeText={text => setFilters({ ...filters, date_debut: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Lieu"
+                  value={filters.lieu}
+                  onChangeText={text => setFilters({ ...filters, lieu: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Description"
+                  value={filters.description}
+                  onChangeText={text => setFilters({ ...filters, description: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Concerts"
+                  value={filters.concerts}
+                  onChangeText={text => setFilters({ ...filters, concerts: text })}
+                />
+              </>
+            )}
+            {filters.type === 'infos' && (
+              <>
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Titre"
+                  value={filters.titre}
+                  onChangeText={text => setFilters({ ...filters, titre: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Description"
+                  value={filters.description}
+                  onChangeText={text => setFilters({ ...filters, description: text })}
+                />
+                <TextInput
+                  style={styles.filterInput}
+                  placeholder="Type d'info"
+                  value={filters.type_info}
+                  onChangeText={text => setFilters({ ...filters, type_info: text })}
+                />
+              </>
+            )}
             <View style={styles.modalButtons}>
               <TouchableOpacity style={styles.applyButton} onPress={applyFilters}>
                 <Text style={styles.applyButtonText}>Appliquer</Text>
@@ -355,8 +548,8 @@ const SearchScreen = () => {
           </View>
         </View>
       </Modal>
-    </ImageBackground>
-  );
+      </ImageBackground>
+    );
 };
 
 const styles = StyleSheet.create({
