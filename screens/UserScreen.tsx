@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { ScreenComposant } from './composant/composant';
 
 const logo = require('././assets/logo_user.png');

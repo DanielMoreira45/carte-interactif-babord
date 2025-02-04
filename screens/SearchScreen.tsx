@@ -27,19 +27,22 @@ const SearchScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetch('http://86.218.243.242:8000/api/groupes/', {
-      headers: {
-        'Permission': 'web_user',
-      },
-    })
-      .then(response => response.json())
-      .then(data => {
-        // Mettez à jour l'état des rectangles avec les données récupérées
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+          headers: {
+            'Permission': 'web_user',
+          },
+        });
+        let data = await response.json();
+        data = data.results;
+
         setRectangles(data);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching data:', error);
-      });
+      }
+    };
+    fetchData();
   }, []);
 
   const applyFilters = () => {

@@ -12,9 +12,8 @@ import {
     Linking,
     Alert,
 } from 'react-native';
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import SearchBarComposant from './SearchBarComposant';
 import { Link } from '@react-navigation/native';
 
 const backImage = require('../assets/backgroundProfile.png');
@@ -67,7 +66,7 @@ const handleFollowArtist = async (profile, user) => {
             method: "PATCH",
             headers: {
                 'permission': 'mobile_user',
-                "Content-Type": "application/json",
+                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 suivre_groupe: [...newGroupesSuivis],
@@ -85,19 +84,18 @@ const handleFollowArtist = async (profile, user) => {
         const updatedUser = await response.json();
         console.log('Réponse:', updatedUser);
         suivreGroupeIds = updatedUser.suivre_groupe;
-
         Alert.alert("Artiste ajouté aux abonnements !");
     } catch (error) {
         console.error("Erreur lors de la requête:", error);
         Alert.alert("Impossible d'ajouter l'artiste !");
     }
 };
-const AppButton = ({ onPress, title, profile, user }) => (
+const AppButton = ({ title, profile, user }) => (
 //     <TouchableOpacity onPress={onPress} style = { title === "Suivre" ? styles.suivreButtonContainer : styles.suiviButtonContainer}>
 //     <Text style={title === "Suivre" ? styles.suivreButtonText : styles.suiviButtonText}>{title}</Text>
 // </TouchableOpacity>
 <TouchableOpacity 
-        onPress={1 === 1 ? () => handleFollowArtist(profile, user) : onPress} 
+        onPress={() => {handleFollowArtist(profile, user)}}
         style={title === "Suivre" ? styles.suivreButtonContainer : styles.suiviButtonContainer}
     >
         <Text style={title === "Suivre" ? styles.suivreButtonText : styles.suiviButtonText}>
@@ -163,7 +161,6 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
     
       const [suivreGroupe, setSuivreGroupe] = useState<GroupType[]>([]);
       const [users, setUsers] = useState<UserType[]>([]);
-
     // const Actualite = [
     //     {
     //         id: 1,
@@ -248,7 +245,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
             }
           };
           loadUser();
-  }, []);
+}, []);
     const user = users.find((us) => us.id === userTemp.id);
     suivreGroupeIds = user?.suivre_groupe ?? [];
     useEffect(() => {
@@ -274,6 +271,8 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
     }, []);
     const [isModalVisible, setModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    
     //let text = isArtist ? profile?.libelle : profile?.nom;
     let text = isArtist ? profile?.libelle : `${user?.prenom} ${user?.nom}`;
 
@@ -281,6 +280,9 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
         setModalContent(content);
         setModalVisible(!isModalVisible);
     };
+    const filteredSuivreGroupe = suivreGroupe.filter(item =>
+        item.libelle.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     const buttonData = [
         {
             id: 1,
@@ -354,10 +356,24 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
             ) : (
                 <View style={{ flex: 1 }}>
                     <Text style={styles.modalTitle}>Artistes Suivies</Text>
-
                     <View style={styles.container1}>
                         <FlatList
-                            data={suivreGroupe}
+                            data={filteredSuivreGroupe}
+                            ListHeaderComponent={
+                                <SearchBarComposant
+                          searchQuery = {searchQuery}
+                          setSearchQuery = {setSearchQuery}
+                          setModalVisible = {setModalVisible}
+                          searchIconSize = {20}
+                          filterIconSize = {24}
+                          iconColor = "#888"
+                          placeholderTextColor = "#888"
+                          searchBarHeight = {40}
+                          searchBarWidth = '100%'
+                          filterButtonHeight = {40}
+                          filterButtonWidth = {40}
+                        />
+                            }
                             renderItem={renderItemActualite}
                             keyExtractor={item => item.id.toString()}
                             showsHorizontalScrollIndicator={false}
@@ -420,7 +436,6 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
                     <View>
                         {isArtist ? (
                             <AppButton
-                                onPress={() => navigation.navigate("Main")}
                                 title={user?.suivre_groupe?.includes(profile.id) ? "Suivi" : "Suivre"}
                                 profile={profile}
                                 user={user}

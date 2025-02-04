@@ -44,6 +44,7 @@ const MainScreen = ({ route }: { route: any }) => {
                     height: 63,
                     position: 'absolute',
                 },
+                unmountOnBlur: true,
                 headerShown: false,
                 tabBarIcon: () => {
                     let iconName;
@@ -73,7 +74,7 @@ const MainScreen = ({ route }: { route: any }) => {
             <Tab.Screen name="Maps" component={CarteScreen} options={{tabBarButton: (props) => (<CustomTabBarButton {...props} />)}}/>
             <Tab.Screen name="Search" component={SearchScreen}/>
             <Tab.Screen name="Profile" component={UserScreen} initialParams={{ user }} />
-            <Tab.Screen name="ArtisteScreen" component={ArtisteScreen} options={{tabBarButton: () => null,}}/>
+            <Tab.Screen name="ArtisteScreen" component={ArtisteScreen} options={{tabBarButton: () => null, unmountOnBlur: true}} listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}/>
             <Tab.Screen
                 name="DetailsConcerts"
                 component={DetailsConcertsScreen}
