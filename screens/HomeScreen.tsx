@@ -71,14 +71,39 @@ type ArtisteType = {
 //     image: im2,
 //   },
 // ];
-
+type UserType = {
+  id: number;
+  nom: string;
+  prenom: string;
+  mail: string;
+  password: string;
+  code_postal:  number
+  suivre_groupe: number[];
+};
 const HomeScreen = ({ navigation, route }) => {
   const { user } = route.params;
   const [actualites, setRectangles] = useState<ConcertType[]>([]);
   const [artistes, setArtistes] = useState<ArtisteType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [userActuel, setUserActuel] = useState<UserType>();
 
   useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const response = await fetch('http://86.218.243.242:8000/api/Utilisateur/', {
+          method: 'GET',
+          headers: {
+            'permission': 'mobile_user',
+          },
+        });
+        let data = await response.json();
+        data = data.results;
+        setUserActuel(data.find((us) => us.id === user.id));
+      } catch (error) {
+        console.error('Erreur lors du chargement dun user :', error);
+      }
+    };
+    loadUser();
     const loadConcerts = async () => {
       try {
         const response = await fetch('http://86.218.243.242:8000/api/concerts/', {
@@ -90,8 +115,12 @@ const HomeScreen = ({ navigation, route }) => {
         let data = await response.json();
         data = data.results;
         //console.log('Données des marqueurs :', data);
-        const currentDate = new Date();
-        const filteredData = data.filter((actualite) => new Date(actualite.date_debut) >= currentDate);
+        //const currentDate = new Date();
+        const filteredData = data.filter(
+          (item) =>
+            userActuel?.suivre_groupe.includes(item.id)
+          //&& new Date(item.date_debut) >= currentDate
+        );
         setRectangles(filteredData);
       } catch (error) {
         console.error('Erreur lors du chargement des marqueurs :', error);
@@ -117,7 +146,7 @@ const HomeScreen = ({ navigation, route }) => {
       }
     };
     loadArtists();
-  }, []);
+  }, [user.id, userActuel?.suivre_groupe]);
   const onConcertPress = (concert: typeof actualites[0]) => {
     try {
       navigation.navigate('DetailsConcerts', { marker_id: concert.id });
