@@ -44,7 +44,9 @@ const SearchScreen = () => {
         setRectangles([]);
         return;
       }
-    
+      
+      console.log('Fetching data with query:', searchQuery);
+      console.log('Filters:', filters);
       try {
         let combinedData = [];
         if (filters.type === 'tous') {
@@ -132,14 +134,15 @@ const SearchScreen = () => {
           }
 
           const data = await response.json();
-          combinedData = data.results.map((item: groupe | album | concert | festival | info) => ({ ...item, type: filters.type }));
+          combinedData = data.results.map((item: groupe | album | concert | festival | info) => ({ ...item, type: filters.type.slice(0,-1) }));
+          console.log('Combined data:', combinedData);
         }
 
         // Suppression des doublons
         const uniqueData = Array.from(new Set(combinedData.map((a: { id: any; }) => a.id)))
-          .map(id => {
-            return combinedData.find((a: { id: unknown; }) => a.id === id);
-          });
+        .map(id => {
+          return combinedData.find((a: { id: unknown; }) => a.id === id);
+        });
 
         setRectangles(uniqueData);
       } catch (error) {
@@ -150,7 +153,7 @@ const SearchScreen = () => {
   }, [searchQuery, filters.type]);
 
   const applyFilters = () => {
-    setSearchQuery(filters.type);
+    setSearchQuery('');
     setModalVisible(false);
   };
 
@@ -318,7 +321,7 @@ const SearchScreen = () => {
         return null;
     }
   };
-
+  
   return (
     <ImageBackground source={background} style={[StyleSheet.absoluteFill]}>
       <FlatList
