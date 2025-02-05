@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -10,6 +10,7 @@ import {
   Modal,
 } from 'react-native';
 import { listeDepartements } from './constants/listeDepartements';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import ModalSelector from 'react-native-modal-selector';
 const Icon = require('react-native-vector-icons/Ionicons').default;
@@ -17,61 +18,99 @@ const background = require('./assets/backgroundSearchScreen.png');
 const imageConcert = require('./assets/imageConcert.jpg');
 
 const SearchScreen = () => {
-  const [rectangles, setRectangles] = useState<(groupe | album | concert | festival | info)[]>([]);
+  const [rectangles, setRectangles] = useState<(groupe | album | concert | festival | info | { id: number, type: string })[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [filters, setFilters] = useState({
     type: 'tous',
-    libelle: '',
     departement: '',
-    nb_homme: '0',
-    nb_femme: '0',
     producteur: '',
-    intitule: '',
     date_debut: '',
     lieu: '',
     groupe: '',
-    description: '',
     date_sortie: '',
     concerts: '',
     titre: '',
     type_info: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const [groupesOptions, setGroupesOptions] = useState<{ key: string, label: string }[]>([]);
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const fetchGroupes = async () => {
+    try {
+      const response = await fetch(`http://86.218.243.242:8000/api/groupes`, {
+        headers: {
+          'Permission': 'web_user',
+        },
+      });
+      const data = await response.json();
+      const groupes = data.results.map((groupe: groupe) => ({ key: groupe.id.toString(), label: groupe.libelle }));
+      return groupes;
+    } catch (error) {
+      console.error('Error fetching groupes:', error);
+      return [{ key: 'null', label: 'Inconnu' }];
+    }
+  };
+
+  const showDatePicker = () => {
+    setDatePickerVisible(true);
+  };
+  
+  const onDateChange = (event: any, selectedDate: Date | undefined) => {
+    setDatePickerVisible(false);
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+      setFilters({ ...filters, date_debut: selectedDate.toISOString().split('T')[0] });
+    }
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (searchQuery.trim() === '') {
+      if (debouncedSearchQuery.trim() === '') {
         setRectangles([]);
         return;
       }
       
-      console.log('Fetching data with query:', searchQuery);
-      console.log('Filters:', filters);
       try {
         let combinedData = [];
+        const dateDebutParam = filters.date_debut ? `&date_debut=${filters.date_debut}` : '';
+        const groupeParam = filters.groupe ? (filters.groupe === 'null' ? '' : `&groupe__libelle=${groupesOptions.find(option => option.key === filters.groupe)?.label}`) : '';
+        const dateSortieParam = filters.date_sortie ? `&date_sortie=${filters.date_sortie}` : '';
         if (filters.type === 'tous') {
           const [groupesResponse, albumsResponse, concertsResponse, festivalsResponse, infosResponse] = await Promise.all([
-            fetch(`http://86.218.243.242:8000/api/groupes?q=${searchQuery}`, {
+            fetch(`http://86.218.243.242:8000/api/groupes?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
               headers: {
                 'Permission': 'web_user',
               },
             }),
-            fetch(`http://86.218.243.242:8000/api/albums?q=${searchQuery}`, {
+            fetch(`http://86.218.243.242:8000/api/albums?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
               headers: {
                 'Permission': 'web_user',
               },
             }),
-            fetch(`http://86.218.243.242:8000/api/concerts?q=${searchQuery}`, {
+            fetch(`http://86.218.243.242:8000/api/concerts?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
               headers: {
                 'Permission': 'web_user',
               },
             }),
-            fetch(`http://86.218.243.242:8000/api/festivals?q=${searchQuery}`, {
+            fetch(`http://86.218.243.242:8000/api/festivals?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
               headers: {
                 'Permission': 'web_user',
               },
             }),
-            fetch(`http://86.218.243.242:8000/api/infos?q=${searchQuery}`, {
+            fetch(`http://86.218.243.242:8000/api/infos?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
               headers: {
                 'Permission': 'web_user',
               },
@@ -95,35 +134,35 @@ const SearchScreen = () => {
           let response;
           switch (filters.type) {
             case 'groupes':
-              response = await fetch(`http://86.218.243.242:8000/api/groupes?q=${searchQuery}`, {
+              response = await fetch(`http://86.218.243.242:8000/api/groupes?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
                 headers: {
                   'Permission': 'web_user',
                 },
               });
               break;
             case 'albums':
-              response = await fetch(`http://86.218.243.242:8000/api/albums?q=${searchQuery}`, {
+              response = await fetch(`http://86.218.243.242:8000/api/albums?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
                 headers: {
                   'Permission': 'web_user',
                 },
               });
               break;
             case 'concerts':
-              response = await fetch(`http://86.218.243.242:8000/api/concerts?q=${searchQuery}`, {
+              response = await fetch(`http://86.218.243.242:8000/api/concerts?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
                 headers: {
                   'Permission': 'web_user',
                 },
               });
               break;
             case 'festivals':
-              response = await fetch(`http://86.218.243.242:8000/api/festivals?q=${searchQuery}`, {
+              response = await fetch(`http://86.218.243.242:8000/api/festivals?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
                 headers: {
                   'Permission': 'web_user',
                 },
               });
               break;
             case 'infos':
-              response = await fetch(`http://86.218.243.242:8000/api/infos?q=${searchQuery}`, {
+              response = await fetch(`http://86.218.243.242:8000/api/infos?q=${debouncedSearchQuery}${dateDebutParam}${groupeParam}${dateSortieParam}`, {
                 headers: {
                   'Permission': 'web_user',
                 },
@@ -133,9 +172,10 @@ const SearchScreen = () => {
               return;
           }
 
+          console.log(response);
+
           const data = await response.json();
           combinedData = data.results.map((item: groupe | album | concert | festival | info) => ({ ...item, type: filters.type.slice(0,-1) }));
-          console.log('Combined data:', combinedData);
         }
 
         // Suppression des doublons
@@ -144,13 +184,21 @@ const SearchScreen = () => {
           return combinedData.find((a: { id: unknown; }) => a.id === id);
         });
 
-        setRectangles(uniqueData);
+        setRectangles(uniqueData.length > 0 ? uniqueData : [{ id: -1, type: 'no_results' }]);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
-  }, [searchQuery, filters.type]);
+  }, [debouncedSearchQuery, filters.type, filters.date_debut, filters.groupe]);
+
+  useEffect(() => {
+    const loadGroupes = async () => {
+      const groupes = await fetchGroupes();
+      setGroupesOptions(groupes);
+    };
+    loadGroupes();
+  }, []);
 
   const applyFilters = () => {
     setSearchQuery('');
@@ -160,16 +208,11 @@ const SearchScreen = () => {
   const resetFilters = () => {
     setFilters({
       type: 'tous',
-      libelle: '',
       departement: '',
-      nb_homme: '0',
-      nb_femme: '0',
       producteur: '',
-      intitule: '',
       date_debut: '',
       lieu: '',
       groupe: '',
-      description: '',
       date_sortie: '',
       concerts: '',
       titre: '',
@@ -240,7 +283,22 @@ const SearchScreen = () => {
     type: 'festival';
   };
 
-  const renderItem = ({ item }: { item: groupe | album | concert | festival | info }) => {
+  const renderItem = ({ item }: { item: groupe | album | concert | festival | info | { id: number, type: string } }) => {
+    if (item.type === 'no_results') {
+      return (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Pas de résultats</Text>
+        </View>
+      );
+    }
+    const getGroupeName = (groupeId: number | null) => {
+      if (groupeId === null) {
+        return 'Inconnu';
+      }
+      const groupe = groupesOptions.find(option => option.key === groupeId.toString());
+      return groupe ? groupe.label : 'Inconnu';
+    };
+  
     switch (item.type) {
       case 'groupe':
         return (
@@ -265,6 +323,7 @@ const SearchScreen = () => {
                 <Text style={styles.title}>{item.libelle}</Text>
                 <Text style={styles.subtitle}>{item.description}</Text>
                 <Text style={styles.type}>Lieu : {item.lieu}</Text>
+                <Text style={styles.type}>Groupe : {getGroupeName(item.groupe)}</Text>
                 <TouchableOpacity style={styles.moreButton} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
                   <Text style={styles.moreButtonText}>Voir plus</Text>
                 </TouchableOpacity>
@@ -280,7 +339,7 @@ const SearchScreen = () => {
                 <Text style={styles.title}>{item.intitule}</Text>
                 <Text style={styles.subtitle}>Date : {item.date_debut}</Text>
                 <Text style={styles.type}>Lieu : {item.lieu}</Text>
-                <Text style={styles.type}>Groupe : {item.groupe}</Text>
+                <Text style={styles.type}>Groupe : {getGroupeName(item.groupe)}</Text>
                 <TouchableOpacity style={styles.moreButton} onPress={() => { /* Ajoutez votre logique de navigation ici */ }}>
                   <Text style={styles.moreButtonText}>Voir plus</Text>
                 </TouchableOpacity>
@@ -321,7 +380,7 @@ const SearchScreen = () => {
         return null;
     }
   };
-  
+
   return (
     <ImageBackground source={background} style={[StyleSheet.absoluteFill]}>
       <FlatList
@@ -375,12 +434,6 @@ const SearchScreen = () => {
             </ModalSelector>
             {filters.type === 'groupes' && (
               <>
-                <TextInput
-                  style={styles.filterInput}
-                  placeholder="Libellé"
-                  value={filters.libelle}
-                  onChangeText={text => setFilters({ ...filters, libelle: text })}
-                />
                 <ModalSelector
                   data={listeDepartements}
                   initValue="Sélectionner un département"
@@ -393,30 +446,6 @@ const SearchScreen = () => {
                     value={listeDepartements.find(option => option.key === filters.departement)?.label}
                   />
                 </ModalSelector>
-                <ModalSelector
-                  data={numberOptions}
-                  initValue="0"
-                  onChange={(option) => setFilters({ ...filters, nb_homme: option.key })}
-                >
-                  <TextInput
-                    style={styles.filterInput}
-                    editable={false}
-                    placeholder="Nombre d'hommes"
-                    value={filters.nb_homme}
-                  />
-                </ModalSelector>
-                <ModalSelector
-                  data={numberOptions}
-                  initValue="0"
-                  onChange={(option) => setFilters({ ...filters, nb_femme: option.key })}
-                >
-                  <TextInput
-                    style={styles.filterInput}
-                    editable={false}
-                    placeholder="Nombre de femmes"
-                    value={filters.nb_femme}
-                  />
-                </ModalSelector>
                 <TextInput
                   style={styles.filterInput}
                   placeholder="Producteur"
@@ -426,86 +455,104 @@ const SearchScreen = () => {
               </>
             )}
             {filters.type === 'concerts' && (
-              <>
-                <TextInput
-                  style={styles.filterInput}
-                  placeholder="Intitulé"
-                  value={filters.intitule}
-                  onChangeText={text => setFilters({ ...filters, intitule: text })}
-                />
+            <>
+              <TouchableOpacity onPress={showDatePicker}>
                 <TextInput
                   style={styles.filterInput}
                   placeholder="Date de début"
                   value={filters.date_debut}
-                  onChangeText={text => setFilters({ ...filters, date_debut: text })}
+                  editable={false}
                 />
+              </TouchableOpacity>
+              {datePickerVisible && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="default"
+                  onChange={onDateChange}
+                />
+              )}
+              <TextInput
+                style={styles.filterInput}
+                placeholder="Lieu"
+                value={filters.lieu}
+                onChangeText={text => setFilters({ ...filters, lieu: text })}
+              />
+              <ModalSelector
+                data={groupesOptions}
+                initValue="Sélectionner un groupe"
+                onChange={(option) => setFilters({ ...filters, groupe: option.key })}
+              >
                 <TextInput
                   style={styles.filterInput}
-                  placeholder="Lieu"
-                  value={filters.lieu}
-                  onChangeText={text => setFilters({ ...filters, lieu: text })}
+                  editable={false}
+                  placeholder="Sélectionner un groupe"
+                  value={groupesOptions.find(option => option.key === filters.groupe)?.label}
                 />
-                <TextInput
-                  style={styles.filterInput}
-                  placeholder="Groupe"
-                  value={filters.groupe}
-                  onChangeText={text => setFilters({ ...filters, groupe: text })}
-                />
-              </>
-            )}
+              </ModalSelector>
+            </>
+          )}
             {filters.type === 'albums' && (
               <>
-                <TextInput
-                  style={styles.filterInput}
-                  placeholder="Libellé"
-                  value={filters.libelle}
-                  onChangeText={text => setFilters({ ...filters, libelle: text })}
-                />
-                <TextInput
-                  style={styles.filterInput}
-                  placeholder="Description"
-                  value={filters.description}
-                  onChangeText={text => setFilters({ ...filters, description: text })}
-                />
+                <TouchableOpacity onPress={showDatePicker}>
                 <TextInput
                   style={styles.filterInput}
                   placeholder="Date de sortie"
-                  value={filters.date_sortie}
-                  onChangeText={text => setFilters({ ...filters, date_sortie: text })}
+                  value={filters.date_debut}
+                  editable={false}
                 />
+              </TouchableOpacity>
+              {datePickerVisible && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="default"
+                  onChange={onDateChange}
+                />
+              )}
                 <TextInput
                   style={styles.filterInput}
                   placeholder="Lieu"
                   value={filters.lieu}
                   onChangeText={text => setFilters({ ...filters, lieu: text })}
                 />
+                <ModalSelector
+                data={groupesOptions}
+                initValue="Sélectionner un groupe"
+                onChange={(option) => setFilters({ ...filters, groupe: option.key })}
+              >
                 <TextInput
                   style={styles.filterInput}
-                  placeholder="Groupe"
-                  value={filters.groupe}
-                  onChangeText={text => setFilters({ ...filters, groupe: text })}
+                  editable={false}
+                  placeholder="Sélectionner un groupe"
+                  value={groupesOptions.find(option => option.key === filters.groupe)?.label}
                 />
+              </ModalSelector>
               </>
             )}
             {filters.type === 'festivals' && (
               <>
+                <TouchableOpacity onPress={showDatePicker}>
                 <TextInput
                   style={styles.filterInput}
                   placeholder="Date de début"
                   value={filters.date_debut}
-                  onChangeText={text => setFilters({ ...filters, date_debut: text })}
+                  editable={false}
                 />
+              </TouchableOpacity>
+              {datePickerVisible && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="default"
+                  onChange={onDateChange}
+                />
+              )}
                 <TextInput
                   style={styles.filterInput}
                   placeholder="Lieu"
                   value={filters.lieu}
                   onChangeText={text => setFilters({ ...filters, lieu: text })}
-                />
-                <TextInput
-                  style={styles.filterInput}
-                  placeholder="Description"
-                  value={filters.description}
-                  onChangeText={text => setFilters({ ...filters, description: text })}
                 />
                 <TextInput
                   style={styles.filterInput}
@@ -522,12 +569,6 @@ const SearchScreen = () => {
                   placeholder="Titre"
                   value={filters.titre}
                   onChangeText={text => setFilters({ ...filters, titre: text })}
-                />
-                <TextInput
-                  style={styles.filterInput}
-                  placeholder="Description"
-                  value={filters.description}
-                  onChangeText={text => setFilters({ ...filters, description: text })}
                 />
                 <TextInput
                   style={styles.filterInput}
