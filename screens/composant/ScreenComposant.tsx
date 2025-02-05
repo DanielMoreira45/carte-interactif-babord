@@ -14,38 +14,15 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SearchBarComposant from './SearchBarComposant';
-import { Link } from '@react-navigation/native';
+import TitreComposant from './TitreComposant';
+import ButtonComposant from './ButtonComposant';
 
 const backImage = require('../assets/backgroundProfile.png');
-const logo = require('../assets/logo_babord.png');
 const logo_homme = require('../assets/homme.png');
 const logo_femme = require('../assets/femme.png');
 const image = require('../assets/backgroundProfile.png');
 const { height, width } = Dimensions.get('window');
 let suivreGroupeIds: number[]  = [];
-
-const TitreComposant = ({ text }: { text: string }) => {
-    return (
-        <View style={styles.labelContainer}>
-            <Text style={styles.labelText}>{text}</Text>
-        </View>
-    );
-};
-
-interface ButtonComposantProps {
-    text: string;
-    onPress?: () => void;
-    style?: object;
-}
-
-const ButtonComposant: React.FC<ButtonComposantProps> = ({ onPress, text, style }) => {
-    return (
-        <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
-            <Image source={logo} style={styles.logoButton} />
-            <Text style={styles.subText}>{text}</Text>
-        </TouchableOpacity>
-    );
-};
 
 const handleFollowArtist = async (profile, user) => {
     // console.log('Utilisateur:',  JSON.stringify({
@@ -130,6 +107,14 @@ type UserType = {
     suivre_groupe: number[];
 };
 
+type ConcertType = {
+    id: number;
+    intitule: string;
+    date_debut: string;
+    lieu: string;
+    groupe: number;
+  };
+
 const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp }) => {
     //const [groups, setRectangles] = useState<GroupType[]>([]);
     //const [isLoading, setIsLoading] = useState(true);
@@ -161,6 +146,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
     
       const [suivreGroupe, setSuivreGroupe] = useState<GroupType[]>([]);
       const [users, setUsers] = useState<UserType[]>([]);
+      const [filteredConcerts, setFilteredConcerts] = useState<ConcertType[]>([]);
     // const Actualite = [
     //     {
     //         id: 1,
@@ -209,7 +195,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
 
         );
     };
-    const renderItemActualite = ({ item }: { item: GroupType }) => {
+    const renderItemArtiste = ({ item }: { item: GroupType }) => {
 
         return (
             <TouchableOpacity onPress={() => navigation.navigate('Home')}>
@@ -219,6 +205,26 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
                         <View style={styles.content}>
                             <Text style={styles.cardTitle}>{item.libelle}</Text>
                             <Text style={styles.card1Details}>{item.description}</Text>
+                            {/* <View style={styles.cardLink}>
+                                <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
+                            </View> */}
+                        </View>
+                    </ImageBackground>
+                </View>
+            </TouchableOpacity>
+        );
+    };
+
+    const renderItemAConcert = ({ item }: { item: ConcertType }) => {
+
+        return (
+            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <View style={[styles.card1]}>
+                    <ImageBackground source={image} style={styles.cardimages1}>
+                        <View style={styles.overlay} />
+                        <View style={styles.content}>
+                            <Text style={styles.cardTitle}>{item.intitule}</Text>
+                            <Text style={styles.card1Details}>{item.date_debut}, {item.lieu}</Text>
                             {/* <View style={styles.cardLink}>
                                 <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
                             </View> */}
@@ -268,6 +274,29 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
             }
           };
           loadArtists();
+          const loadConcerts = async () => {
+            try {
+              const response = await fetch('http://86.218.243.242:8000/api/concerts/', {
+                method: 'GET',
+                headers: {
+                  'permission': 'web_user',
+                },
+              });
+              let data = await response.json();
+              data = data.results;
+              //console.log('Données des marqueurs :', data);
+              //const currentDate = new Date();
+              const filteredData = data.filter(
+                (item) =>
+                  item.groupe === profile.id
+                //&& new Date(item.date_debut) >= currentDate
+              );
+              setFilteredConcerts(filteredData);
+            } catch (error) {
+              console.error('Erreur lors du chargement des marqueurs :', error);
+            }
+          };
+          loadConcerts();
     }, []);
     const [isModalVisible, setModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
@@ -339,13 +368,13 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
             title: isArtist ? "Prochains concerts" : "Artistes et \nlieux favoris",
             content: isArtist ? (
                 <View style={{ flex: 1 }}>
-                    <Text style={styles.modalTitle}>Prochains concerts de NOM ARTISTE</Text>
+                    <Text style={styles.modalTitle}>Prochains concerts de {profile?.libelle}</Text>
 
                     <View style={styles.container1}>
                         <FlatList
                             //data={Actualite}
-                            data={suivreGroupe}
-                            renderItem={renderItemActualite}
+                            data={filteredConcerts}
+                            renderItem={renderItemAConcert}
                             keyExtractor={item => item.id.toString()}
                             showsHorizontalScrollIndicator={false}
                             style={styles.cardList}
@@ -374,7 +403,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
                           filterButtonWidth = {40}
                         />
                             }
-                            renderItem={renderItemActualite}
+                            renderItem={renderItemArtiste}
                             keyExtractor={item => item.id.toString()}
                             showsHorizontalScrollIndicator={false}
                             style={styles.cardList}
@@ -383,7 +412,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
                 </View>
             )
         },
-        {
+        isArtist ? ({
             id: 3,
             title: isArtist ? "Liens" : "Mes événements\npassés",
             content: isArtist ? (
@@ -412,7 +441,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
                     </View>
                 </View>
             )
-        },
+        }): {},
     ];
 
     //   if (isLoading) {
@@ -469,41 +498,6 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
 };
 
 const styles = StyleSheet.create({
-    labelContainer: {
-        backgroundColor: '#ff3399', // Couleur rose vif
-        paddingHorizontal: 20,
-        paddingVertical: 5,
-        borderRadius: 20,
-        alignSelf: 'center', // Centrer horizontalement si nécessaire
-        marginVertical: 20,
-    },
-    labelText: {
-        fontSize: 26,
-        fontWeight: 'bold',
-        color: '#000', // Texte noir
-        textAlign: 'center',
-        fontFamily: 'chivo.regular',
-    },
-    logoButton: {
-        width: 55,
-        height: 55,
-        marginBottom: 8,
-    },
-    subText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#FFF',
-        fontFamily: 'chivo.regular',
-        lineHeight: 24,
-        textAlign: 'center'
-    },
-    container: {
-        width: 145,
-        alignItems: "center",
-        marginBottom: 15,
-        marginHorizontal: 15,
-    },
-
     image: {
         flex: 1,
         justifyContent: "flex-start",
@@ -748,4 +742,4 @@ const styles = StyleSheet.create({
       },
 });
 
-export { TitreComposant, ButtonComposant, ScreenComposant };
+export default ScreenComposant;

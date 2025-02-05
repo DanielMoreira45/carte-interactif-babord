@@ -21,7 +21,7 @@ type ConcertType = {
   intitule: string;
   date_debut: string;
   lieu: string;
-  grope: number;
+  groupe: number;
 };
 
 type ArtisteType = {
