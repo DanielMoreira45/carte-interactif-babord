@@ -1,15 +1,11 @@
-import React, { useState } from 'react';
-import {
-  Dimensions,
-} from 'react-native';
-
-import { ScreenComposant } from './composant/composant';
+import React from 'react';
+import ScreenComposant from './composant/ScreenComposant';
 
 const logo = require('././assets/logo_user.png');
 
-const UserScreen = ({ navigation }) => {
-  return ( <ScreenComposant navigation = {navigation} logoProfile = {logo} title = {"Title"} isArtist={false}/>);
+const UserScreen = ({ navigation, route }) => {
+  const { user } = route.params;
+  return ( <ScreenComposant navigation={navigation} logoProfile={logo} profile={null} isArtist={false} userTemp = {user}/>);
 };
-
 
 export default UserScreen;

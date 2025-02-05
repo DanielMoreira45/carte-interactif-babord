@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -12,66 +12,104 @@ import {
 
 import LinearGradient from 'react-native-linear-gradient';
 import { Link } from '@react-navigation/native';
-import ArtisteScreen from './ArtisteScreen';
+import { GroupType, UserType, ConcertType } from './composant/Types';
 
 const logo = require('./assets/logo_babord.png');
-const im1 = require('./assets/backgroundConnexion.png');
 const im2 = require('./assets/backgroundEntry.png');
 
-const Actualite = [
-  {
-    id: 1,
-    title: 'Nom de l’actualité',
-    details: 'détail de l’actualité',
-    image: im1,
-  },
-  {
-    id: 2,
-    title: 'Nom de l’actualité',
-    details: 'détail de l’actualité',
-    image: im1,
-  },
-  {
-    id: 3,
-    title: 'Nom de l’actualité',
-    details: 'détail de l’actualité',
-    image: im1,
-  },
-];
+const HomeScreen = ({ navigation, route }) => {
+  const { user } = route.params;
+  const [actualites, setRectangles] = useState<ConcertType[]>([]);
+  const [artistes, setArtistes] = useState<GroupType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userActuel, setUserActuel] = useState<UserType>();
 
-const Artiste = [
-  {
-    id: 1,
-    name: 'Nom de l’artiste',
-    details: "détails",
-    image: im2,
-  },
-  {
-    id: 2,
-    name: 'Nom de l’artiste',
-    details: "détails",
-    image: im2,
-  },
-  {
-    id: 3,
-    name: 'Nom de l’artiste',
-    details: "détails",
-    image: im2,
-  },
-];
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const response = await fetch('http://86.218.243.242:8000/api/Utilisateur/', {
+          method: 'GET',
+          headers: {
+            'permission': 'mobile_user',
+          },
+        });
+        let data = await response.json();
+        data = data.results;
+        setUserActuel(data.find((us) => us.id === user.id));
+      } catch (error) {
+        console.error('Erreur lors du chargement dun user :', error);
+      }
+    };
+    loadUser();
+    const loadConcerts = async () => {
+      try {
+        const response = await fetch('http://86.218.243.242:8000/api/concerts/', {
+          method: 'GET',
+          headers: {
+            'permission': 'web_user',
+          },
+        });
+        let data = await response.json();
+        data = data.results;
+        //console.log('Données des marqueurs :', data);
+        //const currentDate = new Date();
+        const filteredData = data.filter(
+          (item) =>
+            userActuel?.suivre_groupe.includes(item.id)
+          //&& new Date(item.date_debut) >= currentDate
+        );
+        setRectangles(filteredData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des marqueurs :', error);
+      }
+    };
+    loadConcerts();
+    const loadArtists = async () => {
+      try {
+        const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+          method: 'GET',
+          headers: {
+            'permission': 'web_user',
+          },
+        });
+        let data = await response.json();
+        data = data.results;
+        //console.log('Données des marqueurs :', data);
+        setArtistes(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Erreur lors du chargement des artistes :', error);
+        setIsLoading(false);
+      }
+    };
+    loadArtists();
+  }, [user.id, userActuel?.suivre_groupe]);
+  
+  const onConcertPress = (concert: typeof actualites[0]) => {
+    try {
+      navigation.navigate('DetailsConcerts', { marker_id: concert.id });
+    } catch (error) {
+      console.error('Erreur lors de la navigation vers les détails :', error);
+    }
+  };
 
-const HomeScreen = ({ navigation }) => {
-
-  const renderItemActualite = ({ item }: { item: typeof Actualite[0] }) => {
+  const onArtistePress = (item: typeof artistes[0]) => {
+    try {
+      navigation.navigate('ArtisteScreen', { navigation: navigation, profile: item, user: user })
+    } catch (error) {
+      console.error('Erreur lors de la navigation vers les détails :', error);
+    }
+  };
+  const renderItemActualite = ({ item }: { item: typeof actualites[0] }) => {
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('DetailsConcerts', { marker_id: item.id })}>
+      <TouchableOpacity onPress={() => onConcertPress(item)}>
         <View style={[styles.card1]}>
-          <ImageBackground source={item.image} style={styles.cardimages1}>
+          <ImageBackground source={im2} style={styles.cardimages1}>
             <View style={styles.overlay} />
             <View style={styles.content}>
-              <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.card1Details}>{item.details}</Text>
+              <Text style={styles.cardTitle} numberOfLines={2} ellipsizeMode="tail" >{item.intitule}</Text>
+              <Text style={styles.card1Details}>{item.date_debut}, {item.lieu}</Text>
               <View style={styles.cardLink}>
               <Link to={{ screen: 'ArtisteScreen' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
             </View>
@@ -82,65 +120,70 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
-  const renderItemArtiste = ({ item }: { item: typeof Artiste[0] }) => {
+  const renderItemArtiste = ({ item }: { item: typeof artistes[0] }) => {
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('ArtisteScreen')}>
+      <TouchableOpacity onPress={() => onArtistePress(item)}>
         <View style={[styles.card2]}>
-          <Image source={item.image} style={styles.cardimages2} />
-          <Text style={styles.cardName}>{item.name}</Text>
+          <Image source={im2} style={styles.cardimages2} />
+          <Text style={styles.cardName}>{item.libelle}</Text>
           <Text style={styles.card2Details}>Détail ...</Text>
         </View>
       </TouchableOpacity>
     );
   };
-
+if (isLoading) {
+        return (
+          <View style={styles.contain}>
+            <Text style={styles.loadingText}>Chargement des données...</Text>
+          </View>
+        );
+      }
   return (
-    
     <LinearGradient
       colors={['#000000', '#FF3399']}
       style={styles.linearGradient}
     >
-      <ScrollView style={{marginBottom: 65}}>
-      <Image source={logo} style={styles.logo}></Image>
-      <Text style={styles.title}>
-        Ohé explorateurice à grandes oreilles !
-      </Text>
+      <ScrollView style={{ marginBottom: 65 }}>
+        <Image source={logo} style={styles.logo}></Image>
+        <Text style={styles.title}>
+          Ohé explorateurice à grandes oreilles !
+        </Text>
 
-      <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>Prochains concerts</Text>
-        <Link to={{ screen: 'Connexion'}} style={styles.link}>View All</Link>
-      </View>
+        <View style={styles.subtitleContainer}>
+          <Text style={styles.subtitle}>Prochains concerts</Text>
+          <Link to={{ screen: 'Connexion' }} style={styles.link}>View All</Link>
+        </View>
 
 
 
-      <View style={styles.container1}>
-        <FlatList
-          data={Actualite}
-          horizontal
-          renderItem={renderItemActualite}
-          keyExtractor={item => item.id.toString()}
-          showsHorizontalScrollIndicator={false}
-          style={styles.cardList}
-        />
-      </View>
-      <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>Proche de chez vous</Text>
-        <Link to={{ screen: 'Connexion'}} style={styles.link}>View All</Link>
-      </View>
-      <View style={styles.container2}>
-        <FlatList
-          data={Artiste}
-          horizontal
-          renderItem={renderItemArtiste}
-          keyExtractor={item => item.id.toString()}
-          showsHorizontalScrollIndicator={false}
-          style={styles.cardList}
-        />
-      </View>
+        <View style={styles.container1}>
+          <FlatList
+            data={actualites}
+            horizontal
+            renderItem={renderItemActualite}
+            keyExtractor={item => item.id.toString()}
+            showsHorizontalScrollIndicator={false}
+            style={styles.cardList}
+          />
+        </View>
+        <View style={styles.subtitleContainer}>
+          <Text style={styles.subtitle}>Proche de chez vous</Text>
+          <Link to={{ screen: 'Connexion' }} style={styles.link}>View All</Link>
+        </View>
+        <View style={styles.container2}>
+          <FlatList
+            data={artistes}
+            horizontal
+            renderItem={renderItemArtiste}
+            keyExtractor={item => item.id.toString()}
+            showsHorizontalScrollIndicator={false}
+            style={styles.cardList}
+          />
+        </View>
       </ScrollView>
     </LinearGradient>
-    
+
   );
 }
 
@@ -188,6 +231,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     flexDirection: 'row',
     overflow: 'hidden',
+    position: 'relative',
+    justifyContent: 'space-between',
   },
   card2: {
     display: "flex",
@@ -251,12 +296,14 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   cardLink: {
-    marginTop: 45,
+    position: 'absolute',
+    top: 130,
+    //marginTop: 45,
     marginLeft: 18,
     marginBottom: 18,
     backgroundColor: "#000",
     borderRadius: 18,
-    width: "30%",
+    width: 150,
     color: "#FFFFFF",
     fontWeight: "bold",
     textAlign: "center",
@@ -267,7 +314,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     justifyContent: "center",
   },
-  cardLinkText:{
+  cardLinkText: {
     color: "#FFFFFF",
     fontWeight: "bold",
     alignSelf: "center",
@@ -312,6 +359,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between'
+  },
+  loadingText: {
+    fontSize: 18,
+    color: '#333',
+  },
+  contain: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
   },
 
 });

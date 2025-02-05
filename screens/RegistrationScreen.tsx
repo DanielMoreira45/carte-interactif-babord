@@ -9,58 +9,100 @@ import {
     Dimensions,
     KeyboardAvoidingView,
     Platform,
+    Alert,
 } from 'react-native';
 
 import { TextInput } from 'react-native-paper';
 import { Link } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-const Stack = createNativeStackNavigator();
 
 const backImage = require('./assets/backgroundConnexion.png');
-
 const { width } = Dimensions.get('window');
 
-const RegistrationScreen = ({ navigation }) => {
+const RegistrationScreen = ({navigation}) => {
     const [firstName, onChangeFirstName] = React.useState('');
     const [lastName, onChangeLastName] = React.useState('');
     const [email, onChangeEmail] = React.useState('');
     const [password, onChangePassword] = React.useState('');
-    const [ville, onChangeVille] = React.useState('');
+    const [cp, onChangeVille] = React.useState('');
+
+    const handleRegister = async () => {
+        if (!firstName || !lastName || !email || !password) {
+            Alert.alert('Erreur', 'Tous les champs obligatoires doivent être remplis.');
+            return;
+        }
+        console.log(JSON.stringify({
+            nom: lastName,
+            prenom: firstName,
+            mail: email,
+            password: password,
+            code_postal:  cp || "",
+            suivre_groupe: [],
+        }));
+        try {
+            const response = await fetch('http://86.218.243.242:8000/api/Utilisateur/', {
+                method: 'POST',
+                headers: {
+                    'permission': 'create_mobile_user',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nom: lastName,
+                    prenom: firstName,
+                    mail: email,
+                    password: password,
+                    code_postal:  cp || "",
+                    suivre_groupe: [],
+                }),
+            });
+            console.log(response);
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Erreur:', errorData);
+                Alert.alert('Erreur', 'Une erreur est survenue lors de l\'inscription.');
+                return;
+            }
+
+            Alert.alert('Succès', 'Inscription réussie!');
+            navigation.navigate('Connexion');
+        } catch (error) {
+            console.error('Erreur lors de la requête:', error);
+            Alert.alert('Erreur', 'Impossible de terminer l\'inscription.');
+        }
+    };
 
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'android' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-            keyboardVerticalOffset={Platform.OS === 'android' ? 40 : 75} 
+            style={styles.keyboardAvoidingView}
+            keyboardVerticalOffset={Platform.OS === 'android' ? 40 : 75}
         >
             <ImageBackground source={backImage} resizeMode="cover" style={styles.image}>
                 <SafeAreaView style={styles.safeArea}>
                     {/* Основной контент */}
                     <View style={styles.contentContainer}>
                     <TextInput
-                            label="Prénom"
+                            label="Prénom *"
                             value={firstName}
                             onChangeText={onChangeFirstName}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
                         />
                         <TextInput
-                            label="Nom"
+                            label="Nom *"
                             value={lastName}
                             onChangeText={onChangeLastName}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
                         />
                         <TextInput
-                            label="Email"
+                            label="Email *"
                             value={email}
                             onChangeText={onChangeEmail}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
                         />
                         <TextInput
-                            label="Mot de passe"
+                            label="Mot de passe *"
                             value={password}
                             onChangeText={onChangePassword}
                             style={styles.input}
@@ -68,8 +110,8 @@ const RegistrationScreen = ({ navigation }) => {
                             secureTextEntry={true}
                         />
                         <TextInput
-                            label="Ville/Code postale"
-                            value={ville}
+                            label="Code postale"
+                            value={cp}
                             onChangeText={onChangeVille}
                             style={styles.input}
                             activeUnderlineColor="#FF3399"
@@ -83,7 +125,8 @@ const RegistrationScreen = ({ navigation }) => {
                             <Link to={{ screen: '' }} style={styles.link}> Privacy Policy</Link>.
                         </Text>
                         <AppButton
-                            onPress={() => navigation.navigate("")}
+                            //onPress={() => navigation.navigate("")}
+                            onPress={handleRegister}
                             title="Inscription"
                         />
                     </View>
@@ -100,6 +143,9 @@ const AppButton = ({ onPress, title }) => (
 )
 
 const styles = StyleSheet.create({
+    keyboardAvoidingView: {
+        flex: 1,
+    },
     safeArea: {
         flex: 1,
         justifyContent: 'space-between',
@@ -112,18 +158,18 @@ const styles = StyleSheet.create({
         marginBottom: 20, 
     },
     appButtonContainer: {
-        backgroundColor: "#FF3399",
+        backgroundColor: '#FF3399',
         borderRadius: 48,
         paddingVertical: 16,
         paddingHorizontal: 32,
         width: width - 47,
         height: 48,
-        alignSelf: "center",
+        alignSelf: 'center',
     },
     appButtonText: {
         fontSize: 16,
-        color: "#fff",
-        alignSelf: "center",
+        color: '#fff',
+        alignSelf: 'center',
         fontFamily: 'Chivo',
         lineHeight: 16,
     },
@@ -132,17 +178,17 @@ const styles = StyleSheet.create({
     },
     link: {
         color: '#FF3399',
-        alignSelf: "center",
+        alignSelf: 'center',
         marginTop: 20,
     },
     input: {
         width: width - 47,
         height: 48,
-        alignSelf: "center",
+        alignSelf: 'center',
         marginTop: 20,
         fontSize: 16,
         lineHeight: 24,
-        backgroundColor: "#FFFFFF"
+        backgroundColor: '#FFFFFF'
     },
     agreement: {
         width: width - 47,
@@ -151,8 +197,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Chivo',
         color: '#000000',
         marginBottom: 20,
-        alignSelf: "center",
-        textAlign: 'center'
+        alignSelf: 'center',
+        textAlign: 'center',
     }
 });
 

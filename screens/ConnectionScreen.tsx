@@ -9,11 +9,11 @@ import {
     Dimensions,
     KeyboardAvoidingView,
     Platform,
+    Alert,
 } from 'react-native';
 
 import { TextInput } from 'react-native-paper';
 import { Link } from '@react-navigation/native';
-
 
 const backImage = require('./assets/backgroundConnexion.png');
 
@@ -22,6 +22,44 @@ const { width } = Dimensions.get('window');
 const ConnectionScreen = ({ navigation }) => {
     const [email, onChangeEmail] = React.useState('');
     const [password, onChangePassword] = React.useState('');
+    
+    const handleLogin = async () => {
+        if (!email || !password) {
+            Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://86.218.243.242:8000/api/mobile-login/', {
+                method: 'POST',
+                headers: {
+                    'permission': 'web_user',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mail: email,
+                    password: password,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Erreur:', errorData);
+                Alert.alert('Erreur', 'Email ou mot de passe incorrect.');
+                return;
+            }
+
+            const userData = await response.json();
+            console.log('Utilisateur connecté :', userData);
+
+            Alert.alert('Succès', `Bienvenue, ${userData.prenom}!`);
+            navigation.navigate('Main', { user: userData });
+            //navigation.navigate('Main');
+        } catch (error) {
+            console.error('Erreur lors de la connexion :', error);
+            Alert.alert('Erreur', 'Impossible de terminer la connexion.');
+        }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -56,7 +94,8 @@ const ConnectionScreen = ({ navigation }) => {
                             <Link to={{ screen: '' }} style={styles.link}> Privacy Policy</Link>.
                         </Text>
                         <AppButton
-                            onPress={() => navigation.navigate("Main")}
+                            //onPress={() => navigation.navigate("Main")}
+                            onPress={handleLogin}
                             title="Connexion"
                         />
                     </View>

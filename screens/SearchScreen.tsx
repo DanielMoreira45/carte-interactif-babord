@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 
 import ModalSelector from 'react-native-modal-selector';
-const Icon = require('react-native-vector-icons/Ionicons').default;
+import Icon from 'react-native-vector-icons/Ionicons';
+// const Icon = require('react-native-vector-icons/Ionicons').default; // Voir le quelle import a prendre
 const background = require('./assets/backgroundSearchScreen.png');
 const imageConcert = require('./assets/imageConcert.jpg');
 

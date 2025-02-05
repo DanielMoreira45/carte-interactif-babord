@@ -12,7 +12,7 @@ const TitreComposant = ({ text }: { text: string }) => {
 
 const styles = StyleSheet.create({
     labelContainer: {
-        backgroundColor: '#ff4081', // Couleur rose vif
+        backgroundColor: '#FF3399', // Couleur rose vif
         paddingHorizontal: 20,
         paddingVertical: 5,
         borderRadius: 20,
