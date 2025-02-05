@@ -73,7 +73,7 @@ const HomeScreen = ({ navigation }) => {
               <Text style={styles.cardTitle}>{item.title}</Text>
               <Text style={styles.card1Details}>{item.details}</Text>
               <View style={styles.cardLink}>
-              <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
+              <Link to={{ screen: 'ArtisteScreen' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
             </View>
             </View>
           </ImageBackground>
