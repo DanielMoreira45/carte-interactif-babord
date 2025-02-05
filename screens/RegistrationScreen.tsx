@@ -14,6 +14,7 @@ import {
 
 import { TextInput } from 'react-native-paper';
 import { Link } from '@react-navigation/native';
+import { ENDPOINT_USERS } from './composant/endpoints';
 
 const backImage = require('./assets/backgroundConnexion.png');
 const { width } = Dimensions.get('window');
@@ -39,7 +40,7 @@ const RegistrationScreen = ({navigation}) => {
             suivre_groupe: [],
         }));
         try {
-            const response = await fetch('http://86.218.243.242:8000/api/Utilisateur/', {
+            const response = await fetch(ENDPOINT_USERS, {
                 method: 'POST',
                 headers: {
                     'permission': 'create_mobile_user',

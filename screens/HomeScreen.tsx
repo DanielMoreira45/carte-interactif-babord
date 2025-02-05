@@ -13,6 +13,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { Link } from '@react-navigation/native';
 import { GroupType, UserType, ConcertType } from './composant/Types';
+import { ENDPOINT_CONCERT, ENDPOINT_GROUPES, ENDPOINT_USERS } from './composant/endpoints';
 
 const logo = require('./assets/logo_babord.png');
 const im2 = require('./assets/backgroundEntry.png');
@@ -27,7 +28,7 @@ const HomeScreen = ({ navigation, route }) => {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const response = await fetch('http://86.218.243.242:8000/api/Utilisateur/', {
+        const response = await fetch(ENDPOINT_USERS, {
           method: 'GET',
           headers: {
             'permission': 'mobile_user',
@@ -43,7 +44,7 @@ const HomeScreen = ({ navigation, route }) => {
     loadUser();
     const loadConcerts = async () => {
       try {
-        const response = await fetch('http://86.218.243.242:8000/api/concerts/', {
+        const response = await fetch(ENDPOINT_CONCERT, {
           method: 'GET',
           headers: {
             'permission': 'web_user',
@@ -52,11 +53,11 @@ const HomeScreen = ({ navigation, route }) => {
         let data = await response.json();
         data = data.results;
         //console.log('Données des marqueurs :', data);
-        //const currentDate = new Date();
+        const currentDate = new Date();
         const filteredData = data.filter(
           (item) =>
             userActuel?.suivre_groupe.includes(item.id)
-          //&& new Date(item.date_debut) >= currentDate
+          && new Date(item.date_debut) >= currentDate
         );
         setRectangles(filteredData);
       } catch (error) {
@@ -66,7 +67,7 @@ const HomeScreen = ({ navigation, route }) => {
     loadConcerts();
     const loadArtists = async () => {
       try {
-        const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+        const response = await fetch(ENDPOINT_GROUPES, {
           method: 'GET',
           headers: {
             'permission': 'web_user',
@@ -84,10 +85,10 @@ const HomeScreen = ({ navigation, route }) => {
     };
     loadArtists();
   }, [user.id, userActuel?.suivre_groupe]);
-  
+
   const onConcertPress = (concert: typeof actualites[0]) => {
     try {
-      navigation.navigate('DetailsConcerts', { marker_id: concert.id });
+      navigation.navigate('DetailsConcerts', { marker_id: concert.id , user: user});
     } catch (error) {
       console.error('Erreur lors de la navigation vers les détails :', error);
     }

@@ -6,14 +6,14 @@ import Geolocation from '@react-native-community/geolocation';
 import { MarkerType } from './composant/Types';
 import CarteMapComposant from './composant/CarteMapComposant';
 
-const MapComposant = () => {
+const MapComposant = (route) => {
   const [initialRegion, setInitialRegion] = useState({
     latitude: 46.603354,
     longitude: 1.888334,
     latitudeDelta: 8.5,
     longitudeDelta: 8.5,
   });
-
+  const user = route.params;
   const navigation = useNavigation();
   const PinImage = require('./assets/pinBabord.png');
   const [selectedMarkerId, setSelectedMarkerId] = useState<number | null>(null);
@@ -108,7 +108,7 @@ const MapComposant = () => {
   const onCardPress = (marker: MarkerType) => {
     setSelectedMarkerId(marker.id); // Mettre à jour l'ID du marqueur sélectionné
     try {
-      navigation.navigate('DetailsConcerts', { marker_id: marker.id });
+      navigation.navigate('DetailsConcerts', { marker_id: marker.id , user: user});
     } catch (error) {
       console.error('Erreur lors de la navigation vers les détails :', error);
     }

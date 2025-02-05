@@ -71,16 +71,11 @@ const MainScreen = ({ route }: { route: any }) => {
         >
             <Tab.Screen name="Home" component={HomeScreen} initialParams={{ user }}/>
             <Tab.Screen name="Notifications" component={HomeScreen}/>
-            <Tab.Screen name="Maps" component={CarteScreen} options={{tabBarButton: (props) => (<CustomTabBarButton {...props} />)}}/>
+            <Tab.Screen name="Maps" component={CarteScreen} initialParams={{ user }} options={{tabBarButton: (props) => (<CustomTabBarButton {...props} />)}}/>
             <Tab.Screen name="Search" component={SearchScreen}/>
             <Tab.Screen name="Profile" component={UserScreen} initialParams={{ user }} />
             <Tab.Screen name="ArtisteScreen" component={ArtisteScreen} options={{tabBarButton: () => null, unmountOnBlur: true}} listeners={({navigation}) => ({blur: () => navigation.setParams({screen: undefined})})}/>
-            <Tab.Screen
-                name="DetailsConcerts"
-                component={DetailsConcertsScreen}
-                options={{
-                tabBarButton: () => null, // Cache le bouton dans la barre pour naviguer uniquement par programmation
-                }}
+            <Tab.Screen name="DetailsConcerts" component={DetailsConcertsScreen} options={{ tabBarButton: () => null }}
             />
         </Tab.Navigator>
     );

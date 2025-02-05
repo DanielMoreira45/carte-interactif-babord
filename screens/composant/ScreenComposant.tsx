@@ -17,6 +17,7 @@ import SearchBarComposant from './SearchBarComposant';
 import TitreComposant from './TitreComposant';
 import ButtonComposant from './ButtonComposant';
 import { GroupType, UserType, ConcertType } from './Types';
+import { ENDPOINT_CONCERT, ENDPOINT_GROUPES, ENDPOINT_USERS } from './endpoints';
 
 const backImage = require('../assets/backgroundProfile.png');
 const logo_homme = require('../assets/homme.png');
@@ -40,7 +41,7 @@ const handleFollowArtist = async (profile, user) => {
     //const newGroupesSuivis = suivreGroupeIds.includes(profile.id) ? suivreGroupeIds.filter((id) => id !== profile.id) : [...suivreGroupeIds, profile.id];
     //console.log('aled',newGroupesSuivis);
     try {
-        const response = await fetch(`http://86.218.243.242:8000/api/Utilisateur/${user.id}/`, {
+        const response = await fetch(`${ENDPOINT_USERS}/${user.id}/`, {
             method: "PATCH",
             headers: {
                 'permission': 'mobile_user',
@@ -90,7 +91,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
     // useEffect(() => {
     //     const loadGroupes = async () => {
     //         try {
-    //             const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+    //             const response = await fetch(ENDPOINT_GROUPES, {
     //                 method: 'GET',
     //                 headers: {
     //                     'permission': 'web_user',
@@ -205,7 +206,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
     useEffect(() => {
           const loadUser = async () => {
             try {
-              const response = await fetch('http://86.218.243.242:8000/api/Utilisateur/', {
+              const response = await fetch(ENDPOINT_USERS, {
                 method: 'GET',
                 headers: {
                   'permission': 'mobile_user',
@@ -225,7 +226,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
     useEffect(() => {
         const loadArtists = async () => {
             try {
-              const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+              const response = await fetch(ENDPOINT_GROUPES, {
                 method: 'GET',
                 headers: {
                   'permission': 'web_user',
@@ -244,7 +245,7 @@ const ScreenComposant = ({ navigation, logoProfile, profile, isArtist, userTemp 
           loadArtists();
           const loadConcerts = async () => {
             try {
-              const response = await fetch('http://86.218.243.242:8000/api/concerts/', {
+              const response = await fetch(ENDPOINT_CONCERT, {
                 method: 'GET',
                 headers: {
                   'permission': 'web_user',

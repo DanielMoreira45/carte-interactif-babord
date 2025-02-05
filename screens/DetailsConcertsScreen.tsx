@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
 import TitreComposant from './composant/TitreComposant.tsx';
 import { useNavigation } from '@react-navigation/native';
+import { ConcertType, GroupType, UserType } from './composant/Types.tsx';
+import { ENDPOINT_CONCERT, ENDPOINT_GROUPES, ENDPOINT_USERS } from './composant/endpoints.tsx';
 
 type MarkerType = {
   id: number;
@@ -17,11 +19,55 @@ type MarkerType = {
 };
 
 const DetailsConcertsScreen = ({ route }: { route: any }) => {
+  const { user } = route.params;
   const navigation = useNavigation();
   const { marker_id } = route.params;
   const [markers, setMarkers] = useState<MarkerType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const background = require('./assets/backgroundConcert.png');
+
+
+  const [concert, setConcert] = useState<ConcertType[]>([]);
+
+  useEffect(() => {
+    const loadConcerts = async () => {
+      try {
+        const response = await fetch(ENDPOINT_CONCERT, {
+          method: 'GET',
+          headers: {
+            'permission': 'web_user',
+          },
+        });
+        let data = await response.json();
+        data = data.results;
+        setConcert(data.find((us) => us.id === marker_id));
+      } catch (error) {
+        console.error('Erreur lors du chargement des concerts :', error);
+      }
+    };
+    loadConcerts();
+  }, );
+
+  const [groupe, setgroupe] = useState<GroupType[]>([]);
+
+  useEffect(() => {
+    const loadConcerts = async () => {
+      try {
+        const response = await fetch(ENDPOINT_GROUPES, {
+          method: 'GET',
+          headers: {
+            'permission': 'web_user',
+          },
+        });
+        let data = await response.json();
+        data = data.results;
+        setgroupe(data.find((us) => us.id === concert.id));
+      } catch (error) {
+        console.error('Erreur lors du chargement des groupes :', error);
+      }
+    };
+    loadConcerts();
+  }, );
 
   useEffect(() => {
     const loadMarkers = async () => {
@@ -38,6 +84,27 @@ const DetailsConcertsScreen = ({ route }: { route: any }) => {
       } catch (error) {
         console.error('Erreur lors du chargement des marqueurs :', error);
         setIsLoading(false);
+      }
+    };
+    loadMarkers();
+  }, []);
+
+  const [newuser, setUser] = useState<UserType[]>([]);
+
+  useEffect(() => {
+    const loadMarkers = async () => {
+      try {
+        const response = await fetch(ENDPOINT_USERS, {
+          method: 'GET',
+          headers: {
+            'permission': 'mobile_user',
+          },
+        });
+        let data = await response.json();
+        data = data.results;
+        setUser(data.find((us) => us.id === user.id));
+      } catch (error) {
+        console.error('Erreur lors du chargement des Utilisateurs :', error);
       }
     };
     loadMarkers();
@@ -69,7 +136,7 @@ const DetailsConcertsScreen = ({ route }: { route: any }) => {
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.description}>{marker.details}</Text>
           <Text style={styles.sectionTitle}>Artiste</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('ArtisteScreen')}>
+          <TouchableOpacity onPress={() => navigation.navigate('ArtisteScreen', { navigation: navigation, profile: groupe, user: newuser })}>
             <Text style={styles.link}>{marker.artist ?? 'Redirection vers l\'Artiste'}</Text>
           </TouchableOpacity>
           <Text style={styles.sectionTitle}>Date de l'événement</Text>

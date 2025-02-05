@@ -12,6 +12,7 @@ import {
 
 import ModalSelector from 'react-native-modal-selector';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { ENDPOINT_GROUPES } from './composant/endpoints';
 // const Icon = require('react-native-vector-icons/Ionicons').default; // Voir le quelle import a prendre
 const background = require('./assets/backgroundSearchScreen.png');
 const imageConcert = require('./assets/imageConcert.jpg');
@@ -30,7 +31,7 @@ const SearchScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://86.218.243.242:8000/api/groupes/', {
+        const response = await fetch(ENDPOINT_GROUPES, {
           headers: {
             'Permission': 'web_user',
           },
