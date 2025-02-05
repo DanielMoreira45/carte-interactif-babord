@@ -84,6 +84,7 @@ const HomeScreen = ({ navigation, route }) => {
     };
     loadArtists();
   }, [user.id, userActuel?.suivre_groupe]);
+  
   const onConcertPress = (concert: typeof actualites[0]) => {
     try {
       navigation.navigate('DetailsConcerts', { marker_id: concert.id });
@@ -110,8 +111,8 @@ const HomeScreen = ({ navigation, route }) => {
               <Text style={styles.cardTitle} numberOfLines={2} ellipsizeMode="tail" >{item.intitule}</Text>
               <Text style={styles.card1Details}>{item.date_debut}, {item.lieu}</Text>
               <View style={styles.cardLink}>
-                <Link to={{ screen: '' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
-              </View>
+              <Link to={{ screen: 'ArtisteScreen' }}><Text style={styles.card1Details}>Voir plus</Text></Link>
+            </View>
             </View>
           </ImageBackground>
         </View>

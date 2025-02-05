@@ -12,11 +12,12 @@ import {
 
 import ModalSelector from 'react-native-modal-selector';
 import Icon from 'react-native-vector-icons/Ionicons';
+// const Icon = require('react-native-vector-icons/Ionicons').default; // Voir le quelle import a prendre
 const background = require('./assets/backgroundSearchScreen.png');
 const imageConcert = require('./assets/imageConcert.jpg');
 
-const SearchScreen = ({navigation}) => {
-  const [rectangles, setRectangles] = useState([]);
+const SearchScreen = () => {
+  const [rectangles, setRectangles] = useState<groupe[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [filters, setFilters] = useState({
     type: 'groupes',
@@ -95,6 +96,13 @@ const SearchScreen = ({navigation}) => {
     { key: '94', label: 'Val-de-Marne' },
     { key: '95', label: 'Val-d\'Oise' },
   ];
+
+  type groupe = {
+    id: number;
+    libelle: string;
+    description: string;
+    departement: string;
+  };
 
   // Filtrer les groupes en fonction de la recherche
   const filteredRectangles = rectangles.filter(item =>
