@@ -12,78 +12,15 @@ import {
 
 import LinearGradient from 'react-native-linear-gradient';
 import { Link } from '@react-navigation/native';
+import { GroupType, UserType, ConcertType } from './composant/Types';
 
 const logo = require('./assets/logo_babord.png');
 const im2 = require('./assets/backgroundEntry.png');
 
-type ConcertType = {
-  id: number;
-  intitule: string;
-  date_debut: string;
-  lieu: string;
-  groupe: number;
-};
-
-type ArtisteType = {
-  id: number;
-  libelle: string;
-  description: string;
-};
-
-// const Actualite = [
-//   {
-//     id: 1,
-//     title: 'Nom de l’actualité',
-//     details: 'détail de l’actualité',
-//     image: im1,
-//   },
-//   {
-//     id: 2,
-//     title: 'Nom de l’actualité',
-//     details: 'détail de l’actualité',
-//     image: im1,
-//   },
-//   {
-//     id: 3,
-//     title: 'Nom de l’actualité',
-//     details: 'détail de l’actualité',
-//     image: im1,
-//   },
-// ];
-
-// const Artiste = [
-//   {
-//     id: 1,
-//     name: 'Nom de l’artiste',
-//     details: "détails",
-//     image: im2,
-//   },
-//   {
-//     id: 2,
-//     name: 'Nom de l’artiste',
-//     details: "détails",
-//     image: im2,
-//   },
-//   {
-//     id: 3,
-//     name: 'Nom de l’artiste',
-//     details: "détails",
-//     image: im2,
-//   },
-// ];
-type UserType = {
-  id: number;
-  nom: string;
-  prenom: string;
-  mail: string;
-  password: string;
-  code_postal:  number
-  suivre_groupe: number[];
-};
 const HomeScreen = ({ navigation, route }) => {
   const { user } = route.params;
   const [actualites, setRectangles] = useState<ConcertType[]>([]);
-  const [artistes, setArtistes] = useState<ArtisteType[]>([]);
+  const [artistes, setArtistes] = useState<GroupType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userActuel, setUserActuel] = useState<UserType>();
 
