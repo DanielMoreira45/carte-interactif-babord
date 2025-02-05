@@ -65,7 +65,7 @@ const HomeScreen = ({ navigation }) => {
   const renderItemActualite = ({ item }: { item: typeof Actualite[0] }) => {
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={() => navigation.navigate('DetailsConcerts', { marker_id: item.id })}>
         <View style={[styles.card1]}>
           <ImageBackground source={item.image} style={styles.cardimages1}>
             <View style={styles.overlay} />

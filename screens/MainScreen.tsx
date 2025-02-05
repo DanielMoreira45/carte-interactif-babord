@@ -72,12 +72,12 @@ const MainScreen = ({navigation}) => (
     <Tab.Screen name="Maps" component={CarteScreen} options={{tabBarButton: (props) => (<CustomTabBarButton {...props} />)}}/>
     <Tab.Screen name="Search" component={SearchScreen}/>
     <Tab.Screen name="Profile" component={UserScreen}/>
-    <Tab.Screen name="ArtisteScreen" component={ArtisteScreen} options={{tabBarButton: () => null,}}/>
+    <Tab.Screen name="ArtisteScreen" component={ArtisteScreen} options={{tabBarButton: () => null}}/>
     <Tab.Screen
         name="DetailsConcerts"
         component={DetailsConcertsScreen}
         options={{
-          tabBarButton: () => null, // Cache le bouton dans la barre pour naviguer uniquement par programmation
+          tabBarButton: () => null,
         }}
       />
 </Tab.Navigator>

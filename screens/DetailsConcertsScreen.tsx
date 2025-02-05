@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
 import TitreComposant from './composant/TitreComposant.tsx';
+import { useNavigation } from '@react-navigation/native';
 
 type MarkerType = {
   id: number;
@@ -16,10 +17,11 @@ type MarkerType = {
 };
 
 const DetailsConcertsScreen = ({ route }: { route: any }) => {
-  const { marker_id } = route.params; // Récupération du marker_id depuis les paramètres de navigation
+  const navigation = useNavigation();
+  const { marker_id } = route.params;
   const [markers, setMarkers] = useState<MarkerType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const background = require('./assets/backgroundConcert.png'); // Image de fond
+  const background = require('./assets/backgroundConcert.png');
 
   useEffect(() => {
     const loadMarkers = async () => {
@@ -67,8 +69,8 @@ const DetailsConcertsScreen = ({ route }: { route: any }) => {
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.description}>{marker.details}</Text>
           <Text style={styles.sectionTitle}>Artiste</Text>
-          <TouchableOpacity>
-            <Text style={styles.link}>{marker.artist} (lien vers l'artiste)</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('ArtisteScreen')}>
+            <Text style={styles.link}>{marker.artist ?? 'Redirection vers l\'Artiste'}</Text>
           </TouchableOpacity>
           <Text style={styles.sectionTitle}>Date de l'événement</Text>
           <Text style={styles.date}>{marker.date}</Text>
